@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Garage.Vehicles;
 
 public abstract class Vehicle : IVehicle
