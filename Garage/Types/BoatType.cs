@@ -1,0 +1,8 @@
+namespace Garage.Types;
+
+public enum BoatType
+{
+    Yacht,
+    Sailboat,
+    Ferry
+}

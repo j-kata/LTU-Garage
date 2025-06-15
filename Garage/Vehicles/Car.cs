@@ -1,14 +1,16 @@
+using Garage.Types;
+
 namespace Garage.Vehicles;
 
 public abstract class Car : Vehicle
 {
-    public string FuelType { get; }
+    public FuelType Fuel { get; }
     public uint NumberOfDoors { get; }
 
-    public Car(string registrationNumber, string brand, string model, string color, uint numberOfWheels, string fuelType, uint numberOfDoors)
+    public Car(string registrationNumber, string brand, string model, Color color, uint numberOfWheels, FuelType fuel, uint numberOfDoors)
         : base(registrationNumber, brand, model, color, numberOfWheels)
     {
-        FuelType = fuelType;
+        Fuel = fuel;
         NumberOfDoors = numberOfDoors;
     }
 }

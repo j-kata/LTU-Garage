@@ -1,14 +1,16 @@
+using Garage.Types;
+
 namespace Garage.Vehicles;
 
 public abstract class Boat : Vehicle
 {
-    public string BoatType { get; }
+    public BoatType Type { get; }
     public double Length { get; }
 
-    public Boat(string registrationNumber, string brand, string model, string color, uint numberOfWheels, string boatType, double length)
+    public Boat(string registrationNumber, string brand, string model, Color color, uint numberOfWheels, BoatType type, double length)
         : base(registrationNumber, brand, model, color, numberOfWheels)
     {
-        BoatType = boatType;
+        Type = type;
         Length = length;
     }
 }
