@@ -1,3 +1,4 @@
+using Garage.Extensions;
 using Garage.Types;
 
 namespace Garage.Vehicles;
@@ -11,6 +12,6 @@ public abstract class Car : Vehicle
         : base(registrationNumber, brand, model, color, numberOfWheels)
     {
         Fuel = fuel;
-        NumberOfDoors = numberOfDoors;
+        NumberOfDoors = numberOfDoors.NonZero(nameof(numberOfDoors));
     }
 }
