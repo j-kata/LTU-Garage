@@ -7,6 +7,7 @@ namespace GarageApp;
 public class Garage<T> : IEnumerable<T?> where T : Vehicle
 {
     private readonly T?[] _vehicles;
+
     public int Capacity { get; }
 
     public IEnumerable<T?> GetVehicles() => _vehicles.Where(v => v is not null);
@@ -22,49 +23,75 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
         _vehicles = new T[Capacity];
     }
 
-    public Garage(int capacity, T?[] seed) : this(capacity)
+    public Garage(int capacity, T[] seed) : this(capacity)
     {
         if (seed.Length > capacity)
             throw new ArgumentException("The number of vehicles exceeds the garage capacity", nameof(capacity));
 
         for (var i = 0; i < seed.Length; i++)
-            _vehicles[i] = seed[i];
+        {
+            if (seed[i] is not null && !HasDuplicate(seed[i]))
+                _vehicles[i] = seed[i];
+        }
     }
 
-    public Garage(T?[] seed) : this(seed.Length, seed) { }
+    public Garage(T[] seed) : this(seed.Length, seed) { }
 
 
     public void Park(T vehicle, Action<string> callback)
     {
         if (IsFull)
         {
-            callback("Illegal action! Garage is Full");
+            callback("No empty spot found. Garage is full.");
             return;
         }
 
-        int index = Array.FindIndex(_vehicles, v => v is null);
-        _vehicles[index] = vehicle;
+        if (HasDuplicate(vehicle))
+        {
+            callback("Vehicle with that registration number is already parked.");
+            return;
+        }
 
+        if (!TryFindSpot(out int index))
+            throw new InvalidOperationException("Unexpected error. Garage is full");
+
+
+        _vehicles[index] = vehicle;
         callback("The vehicle was parked");
     }
 
     public void Depart(string registrationNumber, Action<string> callback)
     {
-        int index = Array.FindIndex(_vehicles, v => registrationNumber.EqualsCaseIgnore(v?.RegistrationNumber));
-
-        if (index == -1)
+        if (!TryFindByRegistrationNumber(registrationNumber, out int index))
         {
-            callback("Vehicle was not found.");
+            callback("Vehicle with that registration number was not found.");
             return;
         }
-        _vehicles[index] = null;
 
+        _vehicles[index] = null;
         callback("The vehicle departed.");
+    }
+
+    public bool TryFindByRegistrationNumber(string rNumber, out int index)
+    {
+        index = _vehicles.FirstWithRegistrationNumber(rNumber);
+        return index != -1;
     }
 
     public T? FindByRegistrationNumber(string registrationNumber)
     {
-        return _vehicles.FirstOrDefault(v => registrationNumber.EqualsCaseIgnore(v?.RegistrationNumber));
+        return TryFindByRegistrationNumber(registrationNumber, out int index) ? _vehicles[index] : null;
+    }
+
+    public bool HasDuplicate(T vehicle)
+    {
+        return TryFindByRegistrationNumber(vehicle.RegistrationNumber, out int _);
+    }
+
+    public bool TryFindSpot(out int index)
+    {
+        index = _vehicles.FirstNullIndex();
+        return index != -1;
     }
 
     public IEnumerator<T?> GetEnumerator()
