@@ -1,4 +1,4 @@
-namespace Garage.Vehicles;
+namespace GarageApp.Vehicles;
 
 public interface IVehicle
 {

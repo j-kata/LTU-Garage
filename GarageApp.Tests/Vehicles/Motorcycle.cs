@@ -1,7 +1,7 @@
-using Garage.Types;
-using Garage.Vehicles;
+using GarageApp.Types;
+using GarageApp.Vehicles;
 
-namespace Garage.Tests.Vehicles;
+namespace GarageApp.Tests.Vehicles;
 
 public class MotorcycleTests
 {

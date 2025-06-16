@@ -1,4 +1,4 @@
-﻿namespace Garage;
+﻿namespace GarageApp.Application;
 
 class Program
 {

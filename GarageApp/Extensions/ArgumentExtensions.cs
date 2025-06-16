@@ -1,4 +1,4 @@
-namespace Garage.Extensions;
+namespace GarageApp.Extensions;
 
 public static class ArgumentExtensions
 {

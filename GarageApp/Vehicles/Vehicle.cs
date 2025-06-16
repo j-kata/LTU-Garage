@@ -1,7 +1,7 @@
-using Garage.Types;
-using Garage.Extensions;
+using GarageApp.Types;
+using GarageApp.Extensions;
 
-namespace Garage.Vehicles;
+namespace GarageApp.Vehicles;
 
 public abstract class Vehicle : IVehicle
 {

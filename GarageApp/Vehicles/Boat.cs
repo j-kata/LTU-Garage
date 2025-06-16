@@ -1,7 +1,7 @@
-using Garage.Extensions;
-using Garage.Types;
+using GarageApp.Extensions;
+using GarageApp.Types;
 
-namespace Garage.Vehicles;
+namespace GarageApp.Vehicles;
 
 public class Boat : Vehicle
 {

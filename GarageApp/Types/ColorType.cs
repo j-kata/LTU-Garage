@@ -1,4 +1,4 @@
-namespace Garage.Types;
+namespace GarageApp.Types;
 
 public enum ColorType
 {

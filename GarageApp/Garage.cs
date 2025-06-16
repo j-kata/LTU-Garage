@@ -1,10 +1,10 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using Garage.Extensions;
-using Garage.Vehicles;
+using GarageApp.Extensions;
+using GarageApp.Vehicles;
 
-namespace Garage;
+namespace GarageApp;
 
 public class Garage<T> : IEnumerable<T?> where T : Vehicle
 {
@@ -16,6 +16,7 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
     public bool IsEmpty => PlacesLeft == _capacity;
     public bool IsFull => PlacesLeft == 0;
     public IEnumerable<T?> GetVehicles() => _vehicles.Where(v => v is not null);
+    public int Count => GetVehicles().Count();
 
     public Garage(int capacity)
     {

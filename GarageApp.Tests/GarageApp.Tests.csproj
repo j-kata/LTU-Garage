@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Garage\Garage.csproj" />
+    <ProjectReference Include="..\GarageApp\GarageApp.csproj" />
   </ItemGroup>
 
 </Project>
