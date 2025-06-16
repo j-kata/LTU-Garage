@@ -1,56 +1,23 @@
 using GarageApp.Handler;
+using GarageApp.Menu;
 using GarageApp.UI;
 
 namespace GarageApp.Manager;
 
-public class GarageManager : IManager
+public class GarageManager(IUI ui, IHandler handler) : IManager
 {
-    private readonly IUI _ui;
-    private readonly IHandler _handler;
-    private bool _keepRunning = true;
-
-    public GarageManager(IUI ui, IHandler handler)
-    {
-        _ui = ui;
-        _handler = handler;
-    }
+    private readonly IUI _ui = ui;
+    private readonly IHandler _handler = handler;
 
     public void Run()
     {
-        while (_keepRunning)
+        while (true)
         {
-            ShowMainMenu();
-            var choice = _ui.ReadLine();
-            // AnalyzeChoice(choice);
+            BaseMenu menu = _handler.HasGarage()
+                ? new DefaultGarageMenu(_ui, _handler)
+                : new EmptyGarageMenu(_ui, _handler);
+
+            menu.Run();
         }
-    }
-
-    private void ShowMainMenu()
-    {
-        var menu = _handler.HasGarage() ? GetGarageMenu() : GetDefaultMenu();
-        _ui.WriteLine(menu);
-    }
-
-    private static string GetDefaultMenu()
-    {
-        return
-            "No Garage Is Chosen\n" +
-            "1. Create New Garage \n" +
-            "2. Load Garage From Source \n" +
-            "0. Exit";
-
-    }
-
-    private static string GetGarageMenu()
-    {
-        return
-            "Welcome To Garage Management!\n" +
-            "1. Park New Vehicle \n" +
-            "2. Depart Vehicle \n" +
-            "3. Print Number Of Vehicles\n" +
-            "4. Print All Vehicles\n" +
-            "5. Find Vehicle By Registration Number\n" +
-            "6. Find Vehicle By Parameters\n" +
-            "0. Exit";
     }
 }
