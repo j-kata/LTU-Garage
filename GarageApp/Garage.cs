@@ -1,6 +1,4 @@
 using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using GarageApp.Extensions;
 using GarageApp.Vehicles;
 
@@ -9,31 +7,32 @@ namespace GarageApp;
 public class Garage<T> : IEnumerable<T?> where T : Vehicle
 {
     private readonly T?[] _vehicles;
-    private readonly int _capacity;
+    public int Capacity { get; }
 
-    public int Size => _capacity;
-    public int PlacesLeft => _vehicles.Where(v => v is not null).Count();
-    public bool IsEmpty => PlacesLeft == _capacity;
-    public bool IsFull => PlacesLeft == 0;
     public IEnumerable<T?> GetVehicles() => _vehicles.Where(v => v is not null);
     public int Count => GetVehicles().Count();
+    public int PlacesLeft => Capacity - Count;
+    public bool IsEmpty => PlacesLeft == Capacity;
+    public bool IsFull => Count == Capacity;
+    public T? this[int index] => _vehicles[index];
 
     public Garage(int capacity)
     {
-        _capacity = capacity.Positive(nameof(capacity));
-        _vehicles = new T[_capacity];
+        Capacity = capacity.Positive(nameof(capacity));
+        _vehicles = new T[Capacity];
     }
 
-    public Garage(int capacity, T[] seed) : this(capacity)
+    public Garage(int capacity, T?[] seed) : this(capacity)
     {
         if (seed.Length > capacity)
-            throw new ArgumentException("", nameof(capacity));
+            throw new ArgumentException("The number of vehicles exceeds the garage capacity", nameof(capacity));
 
         for (var i = 0; i < seed.Length; i++)
-        {
             _vehicles[i] = seed[i];
-        }
     }
+
+    public Garage(T?[] seed) : this(seed.Length, seed) { }
+
 
     public void Park(T vehicle, Action<string> callback)
     {
