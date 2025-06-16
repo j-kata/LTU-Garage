@@ -6,12 +6,12 @@ namespace Garage.Vehicles;
 public class Car : Vehicle
 {
     public FuelType FuelType { get; }
-    public uint NumberOfDoors { get; }
+    public int DoorsNumber { get; }
 
-    public Car(string registrationNumber, string brand, string model, ColorType color, uint numberOfWheels, FuelType fuelType, uint numberOfDoors)
-        : base(registrationNumber, brand, model, color, numberOfWheels)
+    public Car(string registrationNumber, string brand, string model, ColorType color, int wheelsNumber, FuelType fuelType, int doorsNumber)
+        : base(registrationNumber, brand, model, color, wheelsNumber)
     {
         FuelType = fuelType;
-        NumberOfDoors = numberOfDoors.NonZero(nameof(numberOfDoors));
+        DoorsNumber = doorsNumber.Positive(nameof(doorsNumber));
     }
 }

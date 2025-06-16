@@ -2,21 +2,28 @@ namespace Garage.Extensions;
 
 public static class ArgumentExtensions
 {
-    public static string NonEmpty(this string value, string name)
+    public static string NotEmpty(this string value, string name)
     {
         return !string.IsNullOrWhiteSpace(value) ? value
             : throw new ArgumentException(name);
     }
 
-    public static uint NonZero(this uint value, string name)
+    public static double Positive(this double value, string name)
     {
-        return value != 0 ? value
+        return value > 0 ? value
             : throw new ArgumentException(name);
     }
 
-    public static float Positive(this float value, string name)
+    public static int Positive(this int value, string name)
     {
         return value > 0 ? value
+            : throw new ArgumentException(name);
+    }
+
+
+    public static int NotNegative(this int value, string name)
+    {
+        return value >= 0 ? value
             : throw new ArgumentException(name);
     }
 }

@@ -9,15 +9,15 @@ public abstract class Vehicle : IVehicle
     public string Model { get; }
     public string RegistrationNumber { get; }
     public ColorType Color { get; }
-    public uint NumberOfWheels { get; }
+    public int WheelsNumber { get; }
     public string Type => GetType().Name;
 
-    public Vehicle(string registrationNumber, string brand, string model, ColorType color, uint numberOfWheels)
+    public Vehicle(string registrationNumber, string brand, string model, ColorType color, int wheelsNumber)
     {
-        RegistrationNumber = registrationNumber.NonEmpty(nameof(registrationNumber));
-        Brand = brand.NonEmpty(nameof(brand));
-        Model = model.NonEmpty(nameof(model));
+        RegistrationNumber = registrationNumber.NotEmpty(nameof(registrationNumber));
+        Brand = brand.NotEmpty(nameof(brand));
+        Model = model.NotEmpty(nameof(model));
         Color = color;
-        NumberOfWheels = numberOfWheels;
+        WheelsNumber = wheelsNumber.NotNegative(nameof(wheelsNumber));
     }
 }
