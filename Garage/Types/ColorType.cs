@@ -1,6 +1,6 @@
 namespace Garage.Types;
 
-public enum Color
+public enum ColorType
 {
     Red,
     Green,

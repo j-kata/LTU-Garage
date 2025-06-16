@@ -8,11 +8,11 @@ public abstract class Vehicle : IVehicle
     public string Brand { get; }
     public string Model { get; }
     public string RegistrationNumber { get; }
-    public Color Color { get; }
+    public ColorType Color { get; }
     public uint NumberOfWheels { get; }
     public string Type => GetType().Name;
 
-    public Vehicle(string registrationNumber, string brand, string model, Color color, uint numberOfWheels)
+    public Vehicle(string registrationNumber, string brand, string model, ColorType color, uint numberOfWheels)
     {
         RegistrationNumber = registrationNumber.NonEmpty(nameof(registrationNumber));
         Brand = brand.NonEmpty(nameof(brand));

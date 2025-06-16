@@ -3,15 +3,15 @@ using Garage.Types;
 
 namespace Garage.Vehicles;
 
-public abstract class Car : Vehicle
+public class Car : Vehicle
 {
-    public FuelType Fuel { get; }
+    public FuelType FuelType { get; }
     public uint NumberOfDoors { get; }
 
-    public Car(string registrationNumber, string brand, string model, Color color, uint numberOfWheels, FuelType fuel, uint numberOfDoors)
+    public Car(string registrationNumber, string brand, string model, ColorType color, uint numberOfWheels, FuelType fuelType, uint numberOfDoors)
         : base(registrationNumber, brand, model, color, numberOfWheels)
     {
-        Fuel = fuel;
+        FuelType = fuelType;
         NumberOfDoors = numberOfDoors.NonZero(nameof(numberOfDoors));
     }
 }
