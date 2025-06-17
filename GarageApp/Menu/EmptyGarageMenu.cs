@@ -15,7 +15,7 @@ public class EmptyGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 
     public override void Show()
     {
-        _ui.WriteLine(
+        _ui.IndentedWriteLine(
             $"{AddChoice}. Create new garage \n" +
             $"{LoadChoice}. Load garage from source \n" +
             $"{ExitChoice}. Exit"
@@ -42,7 +42,6 @@ public class EmptyGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 
     public void CreateGarage()
     {
-        _ui.WriteLine();
         var capacity = Util.PromptUntilValidNumber(_ui, "Enter garage size: ", (val) => val > 0);
 
         _handler.CreateGarage(capacity);
@@ -51,7 +50,6 @@ public class EmptyGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
     public void LoadGarage() { }
     public void InvalidInput()
     {
-        _ui.WriteLine();
         _ui.WriteLine("Unknown command. Try again.");
     }
 }

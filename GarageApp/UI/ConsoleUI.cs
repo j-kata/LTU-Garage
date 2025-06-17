@@ -16,4 +16,10 @@ public class ConsoleUI : IUI
     {
         Console.WriteLine(text);
     }
+
+    public void IndentedWriteLine(string? text = null)
+    {
+        Console.WriteLine();
+        WriteLine(text);
+    }
 }

@@ -8,7 +8,7 @@ public static class Util
     {
         while (true)
         {
-            ui.WriteLine(prompt);
+            ui.IndentedWriteLine(prompt);
             var input = ui.ReadLine();
 
             if (string.IsNullOrEmpty(input))
