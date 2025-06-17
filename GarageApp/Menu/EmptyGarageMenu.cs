@@ -7,43 +7,44 @@ using GarageApp.Vehicles;
 namespace GarageApp.Menu;
 
 
-public class EmptyGarageMenu(IUI ui, IHandler handler, ILoader<Vehicle> loader)
-    : BaseMenu(ui, handler)
+public class EmptyGarageMenu : BaseMenu
 {
     private const string AddChoice = "1";
     private const string LoadChoice = "2";
     private const string ExitChoice = "0";
 
+    private readonly ILoader<Vehicle> _loader;
+    private readonly Dictionary<string, (string name, Action action)> _menuOptions;
+
+    public EmptyGarageMenu(IUI ui, IHandler handler, ILoader<Vehicle> loader) : base(ui, handler)
+    {
+        _loader = loader;
+        _menuOptions = new Dictionary<string, (string name, Action action)>
+        {
+            { AddChoice, ("Create new garage", CreateGarage) },
+            { LoadChoice, ("Load garage from source", LoadGarage) },
+            { ExitChoice, ("Exit", () => ContinueToNextMenu = false) }
+        };
+    }
+
     public override string Title { get; } = "No garage is chosen";
 
     public override void Show()
     {
-        _ui.IndentedWriteLine(
-            $"{AddChoice}. Create new garage \n" +
-            $"{LoadChoice}. Load garage from source \n" +
-            $"{ExitChoice}. Exit"
-        );
+        foreach (var option in _menuOptions)
+            _ui.WriteLine($"{option.Key}. {option.Value.name}");
     }
+
     public override bool HandleChoice(string choice)
     {
-        switch (choice)
+        if (_menuOptions.TryGetValue(choice, out var value))
         {
-            case AddChoice:
-                CreateGarage();
-                return false;
-
-            case LoadChoice:
-                LoadGarage();
-                return false;
-
-            case ExitChoice:
-                ContinueToNextMenu = false;
-                return false;
-
-            default:
-                InvalidInput();
-                return true;
+            value.action.Invoke();
+            return false;
         }
+
+        _ui.WriteLine("Unknown command. Try again.");
+        return true;
     }
 
     public void CreateGarage()
@@ -54,12 +55,7 @@ public class EmptyGarageMenu(IUI ui, IHandler handler, ILoader<Vehicle> loader)
 
     public void LoadGarage()
     {
-        var vehicles = loader.Load();
+        var vehicles = _loader.Load();
         _handler.CreateGarage(vehicles);
-    }
-
-    public void InvalidInput()
-    {
-        _ui.WriteLine("Unknown command. Try again.");
     }
 }

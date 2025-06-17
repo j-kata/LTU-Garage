@@ -46,10 +46,7 @@ public class ParkVehicleMenu : BaseMenu
     public override bool HandleChoice(string choice)
     {
         if (choice == ReturnChoice)
-        {
-            ContinueToNextMenu = false;
             return false;
-        }
 
         if (_createOptions.TryGetValue(choice, out var func))
         {
