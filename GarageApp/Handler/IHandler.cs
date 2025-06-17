@@ -7,8 +7,12 @@ public interface IHandler
     public bool HasGarage();
     public void CreateGarage(int capacity);
     public void CreateGarage(Vehicle[] vehicles);
+    public bool IsGarageEmpty();
     public int TotalPlaces();
     public int FreePlaces();
     public IEnumerable<string> ListVehicles();
     public IEnumerable<string> VehicleTypeStats();
+    public string? FindByRegistration(string rNumber);
+    public string DepartVehicle(string rNumber);
+    public string ParkVehicle(Vehicle vehicle);
 }
