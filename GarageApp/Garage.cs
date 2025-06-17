@@ -9,8 +9,6 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
     private readonly T?[] _vehicles;
 
     public int Capacity { get; }
-
-    public IEnumerable<T?> GetVehicles() => _vehicles.Where(v => v is not null);
     public int Count => GetVehicles().Count();
     public int PlacesLeft => Capacity - Count;
     public bool IsEmpty => PlacesLeft == Capacity;
@@ -37,6 +35,16 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
 
     public Garage(T[] seed) : this(seed.Length, seed) { }
 
+    public IEnumerable<T> GetVehicles()
+    {
+        foreach (var vehicle in _vehicles)
+            if (vehicle is not null) yield return vehicle;
+    }
+
+    public IEnumerable<(string name, int count)> GetVehiclesTypeCount()
+    {
+        return GetVehicles().GroupBy(v => v.Type).Select(kv => (kv.Key, kv.Count()));
+    }
 
     public void Park(T vehicle, Action<string> callback)
     {

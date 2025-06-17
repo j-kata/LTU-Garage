@@ -8,10 +8,10 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 {
     private const string ParkChoice = "1";
     private const string DepartChoice = "2";
-    private const string PrintCount = "3";
-    private const string PrintAll = "4";
-    private const string FindByNumber = "5";
-    private const string FindByParams = "6";
+    private const string PrintListChoice = "3";
+    private const string PrintStatChoice = "4";
+    private const string FindByNumberChoice = "5";
+    private const string FindByParamsChoice = "6";
     private const string ExitChoice = "0";
 
     public override string Title { get; } = "Welcome to garage management!";
@@ -19,15 +19,20 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
     public override void Show()
     {
         _ui.WriteLine(
+            $"Garage capacity is {_handler.TotalPlaces()}" +
+            $"{_handler.FreePlaces()} spots are free."
+        );
+        _ui.IndentedWriteLine(
             $"{ParkChoice}. Park new vehicle \n" +
             $"{DepartChoice}. Depart vehicle \n" +
-            $"{PrintCount}. Print number of vehicles\n" +
-            $"{PrintAll}. Print all vehicles\n" +
-            $"{FindByNumber}. Find vehicle by registration Number\n" +
-            $"{FindByParams}. Find vehicle by parameters\n" +
+            $"{PrintListChoice}. Print list of vehicles\n" +
+            $"{PrintStatChoice}. Print vehicle's type statistics\n" +
+            $"{FindByNumberChoice}. Find vehicle by registration Number\n" +
+            $"{FindByParamsChoice}. Find vehicle by parameters\n" +
             $"{ExitChoice}. Exit"
         );
     }
+
     public override bool HandleChoice(string choice)
     {
         switch (choice)
@@ -38,16 +43,20 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
             case DepartChoice:
                 DepartVehicle();
                 return true;
-            case PrintCount:
-                PrintVehicleCount();
+
+            case PrintListChoice:
+                PrintVehiclesList();
                 return true;
-            case PrintAll:
-                PrintAllVehicles();
+
+            case PrintStatChoice:
+                PrintVehicleTypeStats();
                 return true;
-            case FindByNumber:
+
+            case FindByNumberChoice:
                 FindVehicleByRNumber();
                 return true;
-            case FindByParams:
+
+            case FindByParamsChoice:
                 FindVehicleByParameters();
                 return true;
             case ExitChoice:
@@ -57,6 +66,18 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
                 InvalidInput();
                 return true;
         }
+    }
+
+    public void PrintVehiclesList()
+    {
+        foreach (var vehicle in _handler.ListVehicles())
+            _ui.WriteLine(vehicle);
+    }
+
+    public void PrintVehicleTypeStats()
+    {
+        foreach (var vehicle in _handler.VehicleTypeStats())
+            _ui.WriteLine(vehicle);
     }
 
     private void FindVehicleByRNumber()
@@ -71,7 +92,6 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 
     public void ParkVehicle() { }
     public void DepartVehicle() { }
-    public void PrintVehicleCount() { }
-    public void PrintAllVehicles() { }
+
     public void InvalidInput() { }
 }
