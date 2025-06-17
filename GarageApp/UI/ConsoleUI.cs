@@ -7,12 +7,12 @@ public class ConsoleUI : IUI
         return Console.ReadLine()?.Trim() ?? string.Empty;
     }
 
-    public void Write(string? text)
+    public void Write(string? text = null)
     {
         Console.Write(text);
     }
 
-    public void WriteLine(string? text)
+    public void WriteLine(string? text = null)
     {
         Console.WriteLine(text);
     }

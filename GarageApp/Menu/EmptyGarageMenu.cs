@@ -1,5 +1,6 @@
 using GarageApp.Handler;
 using GarageApp.UI;
+using GarageApp.Helpers;
 
 namespace GarageApp.Menu;
 
@@ -39,16 +40,18 @@ public class EmptyGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
         }
     }
 
-    // TODO: Add helpers
     public void CreateGarage()
     {
-        // TODO: fix no arguments_ui.WriteLine();
-        _ui.Write("Enter garage size: ");
-        var input = _ui.ReadLine();
-        var capacity = int.Parse(input);
+        _ui.WriteLine();
+        var capacity = Util.PromptUntilValidNumber(_ui, "Enter garage size: ", (val) => val > 0);
+
         _handler.CreateGarage(capacity);
     }
 
     public void LoadGarage() { }
-    public void InvalidInput() { }
+    public void InvalidInput()
+    {
+        _ui.WriteLine();
+        _ui.WriteLine("Unknown command. Try again.");
+    }
 }

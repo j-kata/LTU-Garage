@@ -1,4 +1,5 @@
 using GarageApp.Handler;
+using GarageApp.Helpers;
 using GarageApp.UI;
 
 namespace GarageApp.Menu;
@@ -18,8 +19,8 @@ public abstract class BaseMenu(IUI ui, IHandler handler) : IMenu
         while (keepRunning)
         {
             Show();
-            // TODO: Add PromtUntilValid
-            var input = _ui.ReadLine();
+
+            var input = Util.PromptUntilValidString(_ui, "Use numbers to navigate the menu:");
             keepRunning = HandleChoice(input);
         }
         return ContinueToNextMenu;
