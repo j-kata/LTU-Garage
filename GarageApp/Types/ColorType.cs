@@ -9,5 +9,7 @@ public enum ColorType
     Purple,
     Black,
     White,
-    Gray
+    Gray,
+    Silver,
+    Pink
 }

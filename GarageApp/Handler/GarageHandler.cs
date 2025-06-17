@@ -12,4 +12,9 @@ public class GarageHandler : IHandler
     {
         _garage = new Garage<Vehicle>(capacity);
     }
+
+    public void CreateGarage(Vehicle[] vehicles)
+    {
+        _garage = new Garage<Vehicle>(vehicles);
+    }
 }
