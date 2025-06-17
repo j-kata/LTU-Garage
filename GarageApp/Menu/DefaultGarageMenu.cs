@@ -1,5 +1,6 @@
 using GarageApp.Handler;
 using GarageApp.Helpers;
+using GarageApp.Loader;
 using GarageApp.UI;
 using GarageApp.Vehicles;
 
@@ -13,12 +14,15 @@ public class DefaultGarageMenu : BaseMenu
     private const string PrintStatChoice = "4";
     private const string FindByNumberChoice = "5";
     private const string FindByParamsChoice = "6";
+    private const string LoadVehiclesChoice = "7";
     private const string ExitChoice = "0";
 
+    private readonly ILoader<Vehicle> _loader;
     private readonly Dictionary<string, (string name, Action action)> _menuOptions;
 
-    public DefaultGarageMenu(IUI ui, IHandler handler) : base(ui, handler)
+    public DefaultGarageMenu(IUI ui, IHandler handler, ILoader<Vehicle> loader) : base(ui, handler)
     {
+        _loader = loader;
         _menuOptions = new Dictionary<string, (string name, Action action)>{
             { ParkChoice, ("Park new vehicle", ParkVehicle) },
             { DepartChoice, ("Depart vehicle", DepartVehicle) },
@@ -26,6 +30,7 @@ public class DefaultGarageMenu : BaseMenu
             { PrintStatChoice, ("Print vehicle type statistics", PrintVehicleTypeStats) },
             { FindByNumberChoice, ("Find vehicle by registration number", FindVehicleByRNumber) },
             { FindByParamsChoice, ("Find vehicle by parameters", FindVehicleByParameters) },
+            { LoadVehiclesChoice, ("Load vehicles from source", LoadVehiclesFromSource) },
             { ExitChoice, ("Exit", () => ContinueToNextMenu = false) }
         };
     }
@@ -90,5 +95,12 @@ public class DefaultGarageMenu : BaseMenu
     private void FindVehicleByParameters()
     {
         throw new NotImplementedException();
+    }
+
+    private void LoadVehiclesFromSource()
+    {
+        var vehicles = _loader.Load();
+        foreach (var vehicle in vehicles)
+            _ui.WriteLine(_handler.ParkVehicle(vehicle));
     }
 }
