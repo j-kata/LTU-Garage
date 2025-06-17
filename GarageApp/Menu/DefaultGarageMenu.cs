@@ -1,5 +1,7 @@
 using GarageApp.Handler;
+using GarageApp.Helpers;
 using GarageApp.UI;
+using GarageApp.Vehicles;
 
 namespace GarageApp.Menu;
 
@@ -18,16 +20,17 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 
     public override void Show()
     {
-        _ui.WriteLine(
-            $"Garage capacity is {_handler.TotalPlaces()}" +
-            $"{_handler.FreePlaces()} spots are free."
-        );
         _ui.IndentedWriteLine(
+            $"Garage capacity is {_handler.TotalPlaces()}. " +
+            $"{_handler.FreePlaces()} spot(s) are free."
+        );
+
+        _ui.WriteLine(
             $"{ParkChoice}. Park new vehicle \n" +
             $"{DepartChoice}. Depart vehicle \n" +
             $"{PrintListChoice}. Print list of vehicles\n" +
-            $"{PrintStatChoice}. Print vehicle's type statistics\n" +
-            $"{FindByNumberChoice}. Find vehicle by registration Number\n" +
+            $"{PrintStatChoice}. Print vehicle type statistics\n" +
+            $"{FindByNumberChoice}. Find vehicle by registration number\n" +
             $"{FindByParamsChoice}. Find vehicle by parameters\n" +
             $"{ExitChoice}. Exit"
         );
@@ -35,11 +38,13 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 
     public override bool HandleChoice(string choice)
     {
+        // TODO: add check if garage is empty?
         switch (choice)
         {
             case ParkChoice:
                 ParkVehicle();
                 return true;
+
             case DepartChoice:
                 DepartVehicle();
                 return true;
@@ -59,13 +64,28 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
             case FindByParamsChoice:
                 FindVehicleByParameters();
                 return true;
+
             case ExitChoice:
                 ContinueToNextMenu = false;
                 return false;
+
             default:
                 InvalidInput();
                 return true;
         }
+    }
+
+
+    public void ParkVehicle()
+    {
+        new ParkVehicleMenu(_ui, _handler).Run();
+    }
+
+
+    public void DepartVehicle()
+    {
+        var rNumber = Util.PromptUntilValidString(_ui, "Enter registration number: ");
+        _ui.WriteLine(_handler.DepartVehicle(rNumber));
     }
 
     public void PrintVehiclesList()
@@ -82,7 +102,8 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
 
     private void FindVehicleByRNumber()
     {
-        throw new NotImplementedException();
+        var rNumber = Util.PromptUntilValidString(_ui, "Enter registration number: ");
+        _ui.WriteLine(_handler.FindByRegistration(rNumber));
     }
 
     private void FindVehicleByParameters()
@@ -90,8 +111,8 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
         throw new NotImplementedException();
     }
 
-    public void ParkVehicle() { }
-    public void DepartVehicle() { }
-
-    public void InvalidInput() { }
+    public void InvalidInput()
+    {
+        _ui.WriteLine("Unknown command. Try again.");
+    }
 }
