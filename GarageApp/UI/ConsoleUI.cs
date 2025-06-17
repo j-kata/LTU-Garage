@@ -22,4 +22,9 @@ public class ConsoleUI : IUI
         Console.WriteLine();
         WriteLine(text);
     }
+
+    public void Clear()
+    {
+        Console.Clear();
+    }
 }

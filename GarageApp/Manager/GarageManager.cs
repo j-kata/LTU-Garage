@@ -23,6 +23,7 @@ public class GarageManager(IUI ui, IHandler handler, ILoader<Vehicle> loader) : 
                 : new EmptyGarageMenu(_ui, _handler, _loader);
 
             keepRunning = menu.Run();
+            _ui.Clear();
         }
     }
 }
