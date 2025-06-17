@@ -31,7 +31,7 @@ public class EmptyGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
                 LoadGarage();
                 return false;
             case ExitChoice:
-                Environment.Exit(0);
+                ContinueToNextMenu = false;
                 return false;
             default:
                 InvalidInput();

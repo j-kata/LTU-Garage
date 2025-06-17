@@ -7,12 +7,10 @@ public abstract class BaseMenu(IUI ui, IHandler handler) : IMenu
 {
     protected readonly IUI _ui = ui;
     protected readonly IHandler _handler = handler;
+    protected virtual bool ContinueToNextMenu { get; set; } = true;
 
-    public abstract string Title { get; }
-    public abstract void Show();
-    public abstract bool HandleChoice(string choice);
 
-    public virtual void Run()
+    public virtual bool Run()
     {
         _ui.WriteLine(Title);
 
@@ -24,5 +22,10 @@ public abstract class BaseMenu(IUI ui, IHandler handler) : IMenu
             var input = _ui.ReadLine();
             keepRunning = HandleChoice(input);
         }
+        return ContinueToNextMenu;
     }
+
+    public abstract string Title { get; }
+    public abstract void Show();
+    public abstract bool HandleChoice(string choice);
 }

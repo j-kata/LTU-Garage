@@ -11,13 +11,15 @@ public class GarageManager(IUI ui, IHandler handler) : IManager
 
     public void Run()
     {
-        while (true)
+        bool keepRunning = true;
+
+        while (keepRunning)
         {
             BaseMenu menu = _handler.HasGarage()
                 ? new DefaultGarageMenu(_ui, _handler)
                 : new EmptyGarageMenu(_ui, _handler);
 
-            menu.Run();
+            keepRunning = menu.Run();
         }
     }
 }

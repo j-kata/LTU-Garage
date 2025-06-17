@@ -51,7 +51,7 @@ public class DefaultGarageMenu(IUI ui, IHandler handler) : BaseMenu(ui, handler)
                 FindVehicleByParameters();
                 return true;
             case ExitChoice:
-                Environment.Exit(0);
+                ContinueToNextMenu = false;
                 return false;
             default:
                 InvalidInput();
