@@ -1,6 +1,8 @@
 using GarageApp.Handler;
+using GarageApp.Loader;
 using GarageApp.Manager;
 using GarageApp.UI;
+using GarageApp.Vehicles;
 using Moq;
 
 namespace GarageApp.Tests;
@@ -15,11 +17,12 @@ public class GarageManagerTests
 
     private readonly Mock<IUI> _ui = new();
     private readonly Mock<IHandler> _handler = new();
+    private readonly Mock<ILoader<Vehicle>> _loader = new();
     private GarageManager _manager;
 
     public GarageManagerTests()
     {
-        _manager = new(_ui.Object, _handler.Object);
+        _manager = new(_ui.Object, _handler.Object, _loader.Object);
     }
 
     [Fact]
