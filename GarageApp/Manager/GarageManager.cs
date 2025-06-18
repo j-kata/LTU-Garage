@@ -19,7 +19,7 @@ public class GarageManager(IUI ui, IHandler handler, ILoader<Vehicle> loader) : 
         while (keepRunning)
         {
             BaseMenu menu = _handler.HasGarage()
-                ? new DefaultGarageMenu(_ui, _handler)
+                ? new DefaultGarageMenu(_ui, _handler, _loader)
                 : new EmptyGarageMenu(_ui, _handler, _loader);
 
             keepRunning = menu.Run();

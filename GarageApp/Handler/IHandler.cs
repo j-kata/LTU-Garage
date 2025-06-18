@@ -1,3 +1,4 @@
+using GarageApp.Types;
 using GarageApp.Vehicles;
 
 namespace GarageApp.Handler;
@@ -15,4 +16,5 @@ public interface IHandler
     public string? FindByRegistration(string rNumber);
     public string DepartVehicle(string rNumber);
     public string ParkVehicle(Vehicle vehicle);
+    public IEnumerable<string> FilterVehicles(VehicleFilterData data);
 }

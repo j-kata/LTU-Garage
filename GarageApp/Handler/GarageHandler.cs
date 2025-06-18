@@ -1,3 +1,4 @@
+using GarageApp.Types;
 using GarageApp.Vehicles;
 
 namespace GarageApp.Handler;
@@ -37,4 +38,13 @@ public class GarageHandler : IHandler
     public string ParkVehicle(Vehicle vehicle) =>
         _garage is not null && _garage.Park(vehicle)
             ? "Vehicle was parked" : "Garage is full or vehicle is already parked";
+
+    public IEnumerable<string> FilterVehicles(VehicleFilterData data) =>
+        _garage?.GetVehicles().Where(v =>
+            (data.Type is null || data.Type == v.Type) &&
+            (data.Color is null || data.Color == v.Color) &&
+            (data.WheelsNumber is null || data.WheelsNumber == v.WheelsNumber) &&
+            (data.Brand is null || v.Brand.Contains(data.Brand, StringComparison.InvariantCultureIgnoreCase)) &&
+            (data.Model is null || v.Model.Contains(data.Model, StringComparison.InvariantCultureIgnoreCase)))
+            .Select(v => v.ToString()) ?? [];
 }

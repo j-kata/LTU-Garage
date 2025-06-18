@@ -13,7 +13,7 @@ public class DefaultGarageMenu : BaseMenu
     private const string PrintListChoice = "3";
     private const string PrintStatChoice = "4";
     private const string FindByNumberChoice = "5";
-    private const string FindByParamsChoice = "6";
+    private const string FilterChoice = "6";
     private const string LoadVehiclesChoice = "7";
     private const string ExitChoice = "0";
 
@@ -29,7 +29,7 @@ public class DefaultGarageMenu : BaseMenu
             { PrintListChoice, ("Print list of vehicles", PrintVehiclesList) },
             { PrintStatChoice, ("Print vehicle type statistics", PrintVehicleTypeStats) },
             { FindByNumberChoice, ("Find vehicle by registration number", FindVehicleByRNumber) },
-            { FindByParamsChoice, ("Find vehicle by parameters", FindVehicleByParameters) },
+            { FilterChoice, ("Filter vehicles by parameters", FilterVehicles) },
             { LoadVehiclesChoice, ("Load vehicles from source", LoadVehiclesFromSource) },
             { ExitChoice, ("Exit", () => ContinueToNextMenu = false) }
         };
@@ -50,12 +50,10 @@ public class DefaultGarageMenu : BaseMenu
 
     public override bool HandleChoice(string choice)
     {
-        if (choice == ExitChoice) return false;
-
         if (_menuOptions.TryGetValue(choice, out var value))
         {
             value.action.Invoke();
-            return true;
+            return choice != ExitChoice;
         }
 
         _ui.WriteLine("Unknown command. Try again.");
@@ -92,9 +90,9 @@ public class DefaultGarageMenu : BaseMenu
         _ui.WriteLine(_handler.FindByRegistration(rNumber));
     }
 
-    private void FindVehicleByParameters()
+    private void FilterVehicles()
     {
-        throw new NotImplementedException();
+        new FilterVehicleMenu(_ui, _handler).Run();
     }
 
     private void LoadVehiclesFromSource()

@@ -1,5 +1,6 @@
 using System.Collections;
 using GarageApp.Extensions;
+using GarageApp.Types;
 using GarageApp.Vehicles;
 
 namespace GarageApp;
@@ -41,7 +42,7 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
             if (vehicle is not null) yield return vehicle;
     }
 
-    public IEnumerable<(string name, int count)> GetVehiclesTypeCount()
+    public IEnumerable<(VehicleType name, int count)> GetVehiclesTypeCount()
     {
         return GetVehicles().GroupBy(v => v.Type).Select(kv => (kv.Key, kv.Count()));
     }
