@@ -55,4 +55,12 @@ public class MotorcycleTests
         Assert.Throws<ArgumentException>(() => CreateMotorcycle(cylinderVolume: 0));
         Assert.Throws<ArgumentException>(() => CreateMotorcycle(cylinderVolume: -5));
     }
+
+    [Fact]
+    public void Type_ReturnsMotorcycleType()
+    {
+        var vehicle = CreateMotorcycle();
+
+        Assert.Equal(VehicleType.Motorcycle, vehicle.Type);
+    }
 }

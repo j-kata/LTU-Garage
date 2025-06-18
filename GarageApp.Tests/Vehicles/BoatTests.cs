@@ -53,4 +53,12 @@ public class BoatTests
         Assert.Throws<ArgumentException>(() => CreateBoat(length: -9.4));
         Assert.Throws<ArgumentException>(() => CreateBoat(length: 0));
     }
+
+    [Fact]
+    public void Type_ReturnsBoatType()
+    {
+        var vehicle = CreateBoat();
+
+        Assert.Equal(VehicleType.Boat, vehicle.Type);
+    }
 }

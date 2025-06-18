@@ -62,4 +62,12 @@ public class AirplaneTests
         Assert.Throws<ArgumentException>(() => CreateAirplane(wingSpan: -2.3));
         Assert.Throws<ArgumentException>(() => CreateAirplane(wingSpan: 0));
     }
+
+    [Fact]
+    public void Type_ReturnsAirplaneType()
+    {
+        var vehicle = CreateAirplane();
+
+        Assert.Equal(VehicleType.Airplane, vehicle.Type);
+    }
 }

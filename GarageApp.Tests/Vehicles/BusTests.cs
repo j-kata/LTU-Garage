@@ -55,4 +55,12 @@ public class BusTests
     {
         Assert.Throws<ArgumentException>(() => CreateBus(seatsNumber: -9));
     }
+
+    [Fact]
+    public void Type_ReturnsBusType()
+    {
+        var vehicle = CreateBus();
+
+        Assert.Equal(VehicleType.Bus, vehicle.Type);
+    }
 }

@@ -78,13 +78,13 @@ public class CarTests
         Assert.Throws<ArgumentException>(() => CreateCar(wheelsNumber: -3));
     }
 
-    // Common Properties
+    // Car Properties
     [Fact]
-    public void GetType_ReturnsClassName()
+    public void Type_ReturnsCarType()
     {
         var vehicle = CreateCar();
 
-        Assert.Equal("Car", vehicle.Type);
+        Assert.Equal(VehicleType.Car, vehicle.Type);
     }
 
     // Car properties
