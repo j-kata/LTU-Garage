@@ -24,8 +24,7 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
 
     public Garage(int capacity, T[] seed) : this(capacity)
     {
-        if (seed.Length > capacity)
-            throw new ArgumentException("The number of vehicles exceeds the garage capacity", nameof(capacity));
+        seed.MaxLength(capacity, nameof(capacity));
 
         for (var i = 0; i < seed.Length; i++)
             if (seed[i] != null && !HasDuplicate(seed[i]))
@@ -47,7 +46,7 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
 
     public (bool, string message) Park(T vehicle)
     {
-        ArgumentNullException.ThrowIfNull(vehicle);
+        vehicle.NotNull(nameof(vehicle));
 
         if (IsFull)
             return (false, "The garage is full");
@@ -80,9 +79,9 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
 
     public bool TryFindByRegistrationNumber(string rNumber, out int index)
     {
-        string validNumber = rNumber.NotEmpty(nameof(rNumber));
+        rNumber.NotEmpty(nameof(rNumber));
 
-        index = _vehicles.FirstWithRegistrationNumber(validNumber);
+        index = _vehicles.FirstWithRegistrationNumber(rNumber);
         return index != -1;
     }
 
