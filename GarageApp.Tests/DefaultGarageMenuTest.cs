@@ -17,6 +17,7 @@ public class DefaultGarageMenuTests
     private const string RNumberPrompt = "Enter registration number: ";
     private const string GarageIsEmpty = "Garage is empty";
     private const string InvalidInput = "Invalid";
+    private const string MenuChoiceDepart = "2";
     private const string MenuChoicePrintList = "3";
     private const string MenuChoicePrintStat = "4";
     private const string MenuChoiceFindByNum = "5";
@@ -125,7 +126,7 @@ public class DefaultGarageMenuTests
     }
 
     [Fact]
-    public void Run_PromtsForRNumber_WhenOptionFindByNumberIsChosen()
+    public void Run_PromptsForRNumber_WhenOptionFindByNumberIsChosen()
     {
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoiceFindByNum) // Choose Find by registration number
@@ -137,13 +138,40 @@ public class DefaultGarageMenuTests
     }
 
     [Fact]
-    public void Run_PrintsFindByRNumberResults_WhenOptionFindByNumberIsChosend()
+    public void Run_PrintsFindByRNumberResults_WhenOptionFindByNumberIsChosen()
     {
         var result = "Car: Brand Model, Color [Number]";
         _handler.Setup(x => x.FindByRegistration(RegistrationNumber)).Returns(result);
 
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoiceFindByNum) // Choose Find by registration number
+            .Returns(RegistrationNumber) // Enter number
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+        _ui.Verify(x => x.WriteLine(result));
+    }
+
+    [Fact]
+    public void Run_PromptsForRNumber_WhenOptionDepartIsChosen()
+    {
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoiceDepart) // Choose Depart
+            .Returns(RegistrationNumber) // Enter number
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+        _ui.Verify(x => x.IndentedWriteLine(RNumberPrompt));
+    }
+
+    [Fact]
+    public void Run_PrintsDepartResults_WhenOptionDerpartIsChosen()
+    {
+        var result = "Car: Brand Model, Color [Number]";
+        _handler.Setup(x => x.DepartVehicle(RegistrationNumber)).Returns(result);
+
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoiceDepart) // Choose Depart
             .Returns(RegistrationNumber) // Enter number
             .Returns(MenuChoiceExit); // Exit
 

@@ -28,10 +28,8 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
             throw new ArgumentException("The number of vehicles exceeds the garage capacity", nameof(capacity));
 
         for (var i = 0; i < seed.Length; i++)
-        {
-            if (seed[i] is not null && !HasDuplicate(seed[i]))
+            if (seed[i] != null && !HasDuplicate(seed[i]))
                 _vehicles[i] = seed[i];
-        }
     }
 
     public Garage(T[] seed) : this(seed.Length, seed) { }
@@ -70,7 +68,9 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
 
     public bool TryFindByRegistrationNumber(string rNumber, out int index)
     {
-        index = _vehicles.FirstWithRegistrationNumber(rNumber);
+        string validNumber = rNumber.NotEmpty(nameof(rNumber));
+
+        index = _vehicles.FirstWithRegistrationNumber(validNumber);
         return index != -1;
     }
 

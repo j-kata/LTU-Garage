@@ -22,7 +22,7 @@ public class EmptyGarageMenu : BaseMenu
         _menuOptions = new Dictionary<string, (string name, Action action)>
         {
             { AddChoice, ("Create new garage", CreateGarage) },
-            { LoadChoice, ("Create garage source", LoadGarage) },
+            { LoadChoice, ("Create garage from source", LoadGarage) },
             { ExitChoice, ("Exit", () => ShouldExit = true) },
         };
     }

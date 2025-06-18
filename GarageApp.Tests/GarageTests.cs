@@ -217,6 +217,14 @@ public class GarageTests
     }
 
     [Fact]
+    public void TryFindByRegistrationNumber_ThrowsArgumentException_IfNumberIsNull()
+    {
+        var garage = CreateGarageWithSeed(10);
+
+        Assert.Throws<ArgumentException>(() => garage.TryFindByRegistrationNumber(null, out var index));
+    }
+
+    [Fact]
     public void FindByRegistrationNumber_ReturnsVehicle_IfFound()
     {
         var garage = CreateGarageWithSeed(10);
@@ -234,5 +242,53 @@ public class GarageTests
         var invalidNumber = invalidVehicle.RegistrationNumber;
 
         Assert.Null(garage.FindByRegistrationNumber(invalidNumber));
+    }
+
+    [Fact]
+    public void FindByRegistrationNumber_ThrowsArgumentException_IfNumberIsNull()
+    {
+        var garage = CreateGarageWithSeed(10);
+
+        Assert.Throws<ArgumentException>(() => garage.FindByRegistrationNumber(null));
+    }
+
+    [Fact]
+    public void Depart_ReturnsTrue_IfVehicleWasFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var validVehicle = garage[0];
+        var validNumber = validVehicle!.RegistrationNumber;
+
+        Assert.True(garage.Depart(validNumber));
+    }
+
+    [Fact]
+    public void Depart_RemovesVehicleFromGarage_IfVehicleWasFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var validVehicle = garage[0];
+        var validNumber = validVehicle!.RegistrationNumber;
+        garage.Depart(validNumber);
+
+        Assert.DoesNotContain(validVehicle, garage.GetVehicles());
+        Assert.Null(garage[0]);
+    }
+
+    [Fact]
+    public void Depart_ReturnsFalse_IfVehicleWasNotFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var invalidVehicle = _fixture.Create<Car>();
+        var invalidNumber = invalidVehicle.RegistrationNumber;
+
+        Assert.False(garage.Depart(invalidNumber));
+    }
+
+    [Fact]
+    public void Depart_ThrowsArgumentException_IfNumberIsNull()
+    {
+        var garage = CreateGarageWithSeed(10);
+
+        Assert.Throws<ArgumentException>(() => garage.Depart(null));
     }
 }

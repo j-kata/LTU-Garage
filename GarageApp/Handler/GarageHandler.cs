@@ -49,7 +49,7 @@ public class GarageHandler : IHandler
             ?? "Vehice was not found";
 
     public string DepartVehicle(string rNumber) =>
-        _garage is not null && _garage.Depart(rNumber)
+        _garage != null && _garage.Depart(rNumber)
             ? "Vehicle departed" : "Vehice was not found";
 
     public string ParkVehicle(Vehicle vehicle) =>
