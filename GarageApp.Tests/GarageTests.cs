@@ -194,4 +194,45 @@ public class GarageTests
         Assert.Contains((VehicleType.Bus, busNum), typeCount);
         Assert.Contains((VehicleType.Airplane, planeNum), typeCount);
     }
+
+    [Fact]
+    public void TryFindByRegistrationNumber_ReturnsTrueAndIndex_IfVehicleFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var validIndex = 4;
+        var validNumber = garage[validIndex]!.RegistrationNumber;
+
+        Assert.True(garage.TryFindByRegistrationNumber(validNumber, out var index));
+        Assert.Equal(index, validIndex);
+    }
+
+    [Fact]
+    public void TryFindByRegistrationNumber_ReturnsFalseAndInvalidIndex_IfVehicleNotFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var invalidNumber = "InvalidNumber";
+
+        Assert.False(garage.TryFindByRegistrationNumber(invalidNumber, out var index));
+        Assert.Equal(-1, index);
+    }
+
+    [Fact]
+    public void FindByRegistrationNumber_ReturnsVehicle_IfFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var validVehicle = garage[4];
+        var validNumber = validVehicle!.RegistrationNumber;
+
+        Assert.Equal(validVehicle, garage.FindByRegistrationNumber(validNumber));
+    }
+
+    [Fact]
+    public void FindByRegistrationNumber_ReturnsNull_IfVehicleNotFound()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var invalidVehicle = _fixture.Create<Car>();
+        var invalidNumber = invalidVehicle.RegistrationNumber;
+
+        Assert.Null(garage.FindByRegistrationNumber(invalidNumber));
+    }
 }

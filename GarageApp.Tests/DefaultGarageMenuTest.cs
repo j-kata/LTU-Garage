@@ -14,15 +14,16 @@ public class DefaultGarageMenuTests
 {
     private const string DefaultGarageTitle = "Welcome to garage management!";
     // private const string CreateGaragePrompt = "Create new garage";
-    private const string GarageSizePrompt = "Enter garage size: ";
+    private const string RNumberPrompt = "Enter registration number: ";
     private const string GarageIsEmpty = "Garage is empty";
     private const string InvalidInput = "Invalid";
     private const string MenuChoicePrintList = "3";
     private const string MenuChoicePrintStat = "4";
-    // private const string MenuChoiceLoadGarage = "2";
+    private const string MenuChoiceFindByNum = "5";
     private const string MenuChoiceExit = "0";
     private const int GarageCapacity = 5;
     private const int PlacesLeft = 20;
+    private const string RegistrationNumber = "001";
 
     private readonly Mock<IUI> _ui = new();
     private readonly Mock<IHandler> _handler = new();
@@ -90,8 +91,12 @@ public class DefaultGarageMenuTests
     [Fact]
     public void Run_PrintsVehiclesList_WhenOptionPrintListIsChosen()
     {
-        var list = CreateVehicles(GarageCapacity);
-        _handler.Setup(x => x.ListVehicles()).Returns(list.Select(x => x.ToString()));
+        string[] list = [
+            "Car: Brand Model, Color [Number]",
+            "Bus: Brand Model, Color [Number]"
+        ];
+
+        _handler.Setup(x => x.ListVehicles()).Returns(list);
 
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoicePrintList) // Choose Print
@@ -100,21 +105,7 @@ public class DefaultGarageMenuTests
         _menu.Run();
 
         foreach (var item in list)
-            _ui.Verify(x => x.WriteLine(item.ToString()), Times.Once);
-    }
-
-    [Fact]
-    public void Run_PrintsGarageIsEmpty_IfPrintingEmptyList()
-    {
-        _handler.Setup(x => x.ListVehicles()).Returns([GarageIsEmpty]);
-
-        _ui.SetupSequence(x => x.ReadLine())
-            .Returns(MenuChoicePrintList) // Choose Print
-            .Returns(MenuChoiceExit); // Exit
-
-        _menu.Run();
-
-        _ui.Verify(x => x.WriteLine(GarageIsEmpty), Times.Once);
+            _ui.Verify(x => x.WriteLine(item), Times.Once);
     }
 
     [Fact]
@@ -134,17 +125,30 @@ public class DefaultGarageMenuTests
     }
 
     [Fact]
-    public void Run_PrintsGarageIsEmpty_IfPrintingEmptyStat()
+    public void Run_PromtsForRNumber_WhenOptionFindByNumberIsChosen()
     {
-        _handler.Setup(x => x.VehicleTypeStats()).Returns([GarageIsEmpty]);
-
         _ui.SetupSequence(x => x.ReadLine())
-            .Returns(MenuChoicePrintStat) // Choose Print
+            .Returns(MenuChoiceFindByNum) // Choose Find by registration number
+            .Returns(RegistrationNumber) // Enter number
             .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
+        _ui.Verify(x => x.IndentedWriteLine(RNumberPrompt));
+    }
 
-        _ui.Verify(x => x.WriteLine(GarageIsEmpty), Times.Once);
+    [Fact]
+    public void Run_PrintsFindByRNumberResults_WhenOptionFindByNumberIsChosend()
+    {
+        var result = "Car: Brand Model, Color [Number]";
+        _handler.Setup(x => x.FindByRegistration(RegistrationNumber)).Returns(result);
+
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoiceFindByNum) // Choose Find by registration number
+            .Returns(RegistrationNumber) // Enter number
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+        _ui.Verify(x => x.WriteLine(result));
     }
 
     [Fact]
