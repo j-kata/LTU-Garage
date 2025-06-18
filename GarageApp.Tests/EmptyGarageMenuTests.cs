@@ -56,7 +56,7 @@ public class EmptyGarageMenuTests
     {
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoiceCreateGarage) // Choose create
-            .Returns(GarageCapacity.ToString) // Enter capacity
+            .Returns(GarageCapacity.ToString()) // Enter capacity
             .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
@@ -69,7 +69,7 @@ public class EmptyGarageMenuTests
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoiceCreateGarage) // Choose create
             .Returns(InvalidInput) // Invalid capacity
-            .Returns(GarageCapacity.ToString) // Valid capacity
+            .Returns(GarageCapacity.ToString()) // Valid capacity
             .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
@@ -81,11 +81,11 @@ public class EmptyGarageMenuTests
     {
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoiceCreateGarage)    // Choose create
-            .Returns(GarageCapacity.ToString);  // Enter capacity
+            .Returns(GarageCapacity.ToString());  // Enter capacity
 
         _menu.Run();
         _handler.Verify(h => h.CreateGarage(GarageCapacity), Times.Once);
-        _ui.Verify(x => x.IndentedWriteLine(It.Is<string>(s => s.Contains(CreateGaragePrompt))), Times.Once);
+        _ui.Verify(x => x.WriteLine(It.Is<string>(s => s.Contains(CreateGaragePrompt))), Times.Once);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class EmptyGarageMenuTests
 
         _menu.Run();
         _handler.Verify(h => h.CreateGarage(vehicles), Times.Once);
-        _ui.Verify(x => x.IndentedWriteLine(It.Is<string>(s => s.Contains(CreateGaragePrompt))), Times.Once);
+        _ui.Verify(x => x.WriteLine(It.Is<string>(s => s.Contains(CreateGaragePrompt))), Times.Once);
     }
 
     [Fact]

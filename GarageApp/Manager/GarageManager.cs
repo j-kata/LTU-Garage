@@ -12,17 +12,20 @@ public class GarageManager(IUI ui, IHandler handler, ILoader<Vehicle> loader) : 
     private readonly IHandler _handler = handler;
     private readonly ILoader<Vehicle> _loader = loader;
 
+    // Handle app flow
     public void Run()
     {
-        bool keepRunning = true;
-
-        while (keepRunning)
+        bool shouldExit = false;
+        // Run until Exit is called from menu
+        while (!shouldExit)
         {
+            // Choose menu depending on garage state
             BaseMenu menu = _handler.HasGarage()
                 ? new DefaultGarageMenu(_ui, _handler, _loader)
                 : new EmptyGarageMenu(_ui, _handler, _loader);
 
-            keepRunning = menu.Run();
+            shouldExit = menu.Run();
+
             _ui.Clear();
         }
     }

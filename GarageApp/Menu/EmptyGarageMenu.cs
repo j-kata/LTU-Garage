@@ -22,8 +22,8 @@ public class EmptyGarageMenu : BaseMenu
         _menuOptions = new Dictionary<string, (string name, Action action)>
         {
             { AddChoice, ("Create new garage", CreateGarage) },
-            { LoadChoice, ("Load garage from source", LoadGarage) },
-            { ExitChoice, ("Exit", () => ContinueToNextMenu = false) }
+            { LoadChoice, ("Create garage source", LoadGarage) },
+            { ExitChoice, ("Exit", () => ShouldExit = true) },
         };
     }
 
@@ -31,15 +31,19 @@ public class EmptyGarageMenu : BaseMenu
 
     public override void Show()
     {
+        _ui.WriteLine();
+
         foreach (var option in _menuOptions)
             _ui.WriteLine($"{option.Key}. {option.Value.name}");
     }
 
+    // Handle input. Return false to exit from menu 
     public override bool HandleChoice(string choice)
     {
+        // Check if input is a valid menu option
         if (_menuOptions.TryGetValue(choice, out var value))
         {
-            value.action.Invoke();
+            value.action();
             return false;
         }
 
@@ -47,12 +51,14 @@ public class EmptyGarageMenu : BaseMenu
         return true;
     }
 
+    // Ask for valid garage capacity and create new garage
     public void CreateGarage()
     {
         var capacity = Util.PromptUntilValidNumber(_ui, "Enter garage size: ", (val) => val > 0);
         _handler.CreateGarage(capacity);
     }
 
+    // Create garage from source
     public void LoadGarage()
     {
         var vehicles = _loader.Load();
