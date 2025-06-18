@@ -55,7 +55,6 @@ public class GarageManagerTests
         _ui.Verify(x => x.WriteLine(It.Is<string>(s => s.Contains(DefaultGarageTitle))));
     }
 
-
     [Fact]
     public void Run_RunsMultipleTime_IfKeepRunnigIsTrue()
     {

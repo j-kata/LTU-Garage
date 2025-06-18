@@ -7,17 +7,17 @@ public class ConsoleUI : IUI
         return Console.ReadLine()?.Trim() ?? string.Empty;
     }
 
-    public void Write(string? text = null)
+    public void Write(string? text = "")
     {
         Console.Write(text);
     }
 
-    public void WriteLine(string? text = null)
+    public void WriteLine(string? text = "")
     {
         Console.WriteLine(text);
     }
 
-    public void IndentedWriteLine(string? text = null)
+    public void IndentedWriteLine(string? text = "")
     {
         Console.WriteLine();
         WriteLine(text);

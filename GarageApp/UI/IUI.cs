@@ -3,8 +3,8 @@ namespace GarageApp.UI;
 public interface IUI
 {
     public string ReadLine();
-    public void Write(string? value = null);
-    public void WriteLine(string? value = null);
-    public void IndentedWriteLine(string? value = null);
+    public void Write(string? value = "");
+    public void WriteLine(string? value = "");
+    public void IndentedWriteLine(string? value = "");
     public void Clear();
 }
