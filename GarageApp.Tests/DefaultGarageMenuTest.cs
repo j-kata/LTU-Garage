@@ -2,7 +2,6 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using GarageApp.Handler;
 using GarageApp.Loader;
-using GarageApp.Manager;
 using GarageApp.Menu;
 using GarageApp.UI;
 using GarageApp.Vehicles;
@@ -13,18 +12,18 @@ namespace GarageApp.Tests;
 public class DefaultGarageMenuTests
 {
     private const string DefaultGarageTitle = "Welcome to garage management!";
-    // private const string CreateGaragePrompt = "Create new garage";
+    private const string ParkMenuTitle = "Choose the type of vehicle you want to park:";
+    private const string FilterMenuTitle = "Filter vehicles by:";
     private const string RNumberPrompt = "Enter registration number: ";
-    private const string GarageIsEmpty = "Garage is empty";
     private const string InvalidInput = "Invalid";
+    private const string MenuChoicePark = "1";
     private const string MenuChoiceDepart = "2";
     private const string MenuChoicePrintList = "3";
     private const string MenuChoicePrintStat = "4";
     private const string MenuChoiceFindByNum = "5";
+    private const string MenuChoiceFilter = "6";
     private const string MenuChoiceLoad = "7";
     private const string MenuChoiceExit = "0";
-    private const int GarageCapacity = 5;
-    private const int PlacesLeft = 20;
     private const string RegistrationNumber = "001";
 
     private readonly Mock<IUI> _ui = new();
@@ -52,16 +51,28 @@ public class DefaultGarageMenuTests
     }
 
     [Fact]
-    public void Run_PrintsTitle()
+    public void RunAndExit()
     {
-        _ui.Setup(x => x.ReadLine()).Returns(MenuChoiceExit); // Exit loop
-
+        _ui.Setup(x => x.ReadLine()).Returns(MenuChoiceExit);
         _menu.Run();
-        _ui.Verify(x => x.WriteLine(It.Is<string>(s => s.Equals(DefaultGarageTitle))));
     }
 
     [Fact]
-    public void Run_RunsMultipleTimes_UntilInputIsValid()
+    public void Run_PrintsTitle()
+    {
+        RunAndExit();
+        _ui.Verify(x => x.WriteLine(DefaultGarageTitle));
+    }
+
+    [Fact]
+    public void Run_ExitsLoop_IfExitOptionIsChosen()
+    {
+        RunAndExit();
+        _ui.Verify(x => x.ReadLine(), Times.Once);
+    }
+
+    [Fact]
+    public void Run_RetriesInput_UntilValidMenuChoice()
     {
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(InvalidInput) // Invalid input
@@ -82,9 +93,8 @@ public class DefaultGarageMenuTests
         ];
 
         _handler.Setup(x => x.GarageOverview()).Returns(overview);
-        _ui.Setup(x => x.ReadLine()).Returns(MenuChoiceExit); // Exit loop
 
-        _menu.Run();
+        RunAndExit();
 
         foreach (var item in overview)
             _ui.Verify(x => x.WriteLine(item), Times.Once);
@@ -123,19 +133,7 @@ public class DefaultGarageMenuTests
         _menu.Run();
 
         foreach (var item in stat)
-            _ui.Verify(x => x.WriteLine(item.ToString()), Times.Once);
-    }
-
-    [Fact]
-    public void Run_PromptsForRNumber_WhenOptionFindByNumberIsChosen()
-    {
-        _ui.SetupSequence(x => x.ReadLine())
-            .Returns(MenuChoiceFindByNum) // Choose Find by registration number
-            .Returns(RegistrationNumber) // Enter number
-            .Returns(MenuChoiceExit); // Exit
-
-        _menu.Run();
-        _ui.Verify(x => x.IndentedWriteLine(RNumberPrompt));
+            _ui.Verify(x => x.WriteLine(item), Times.Once);
     }
 
     [Fact]
@@ -154,19 +152,7 @@ public class DefaultGarageMenuTests
     }
 
     [Fact]
-    public void Run_PromptsForRNumber_WhenOptionDepartIsChosen()
-    {
-        _ui.SetupSequence(x => x.ReadLine())
-            .Returns(MenuChoiceDepart) // Choose Depart
-            .Returns(RegistrationNumber) // Enter number
-            .Returns(MenuChoiceExit); // Exit
-
-        _menu.Run();
-        _ui.Verify(x => x.IndentedWriteLine(RNumberPrompt));
-    }
-
-    [Fact]
-    public void Run_PrintsDepartResults_WhenOptionDerpartIsChosen()
+    public void Run_PrintsDepartResults_WhenOptionDepartIsChosen()
     {
         var result = "Car: Brand Model, Color [Number]";
         _handler.Setup(x => x.DepartVehicle(RegistrationNumber)).Returns(result);
@@ -181,7 +167,7 @@ public class DefaultGarageMenuTests
     }
 
     [Fact]
-    public void Run_PrintsLoadedVehicles_WhenOptionLoadIsChose()
+    public void Run_PrintsLoadedVehicles_WhenOptionLoadIsChosen()
     {
         string[] result = ["Vehicle [N1] was parked", "Vehicle [N1] was parked"];
         Vehicle[] vehicles = _fixture.CreateMany<Mock<Vehicle>>(4).Select(x => x.Object).ToArray();
@@ -195,16 +181,36 @@ public class DefaultGarageMenuTests
             .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
+
         foreach (var r in result)
             _ui.Verify(x => x.WriteLine(r), Times.Once);
     }
 
-    [Fact]
-    public void Run_ExitsLoop_IfExitOptionIsChose()
+    [Theory]
+    [InlineData(MenuChoicePark, ParkMenuTitle)]
+    [InlineData(MenuChoiceFilter, FilterMenuTitle)]
+    public void Run_PrintsCorrectMenuTitle(string option, string title)
     {
-        _ui.Setup(x => x.ReadLine()).Returns(MenuChoiceExit); // Exit loop
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(option) // Choose option
+            .Returns(MenuChoiceExit) // Return
+            .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
-        _ui.Verify(x => x.ReadLine(), Times.Once);
+        _ui.Verify(x => x.WriteLine(title), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(MenuChoiceDepart, RNumberPrompt)]
+    [InlineData(MenuChoiceFindByNum, RNumberPrompt)]
+    public void Run_PrintsCorrectPrompt(string option, string title)
+    {
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(option) // Choose option
+            .Returns(RegistrationNumber) // Enter number
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+        _ui.Verify(x => x.IndentedWriteLine(title));
     }
 }
