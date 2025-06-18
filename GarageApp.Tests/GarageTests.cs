@@ -291,4 +291,75 @@ public class GarageTests
 
         Assert.Throws<ArgumentException>(() => garage.Depart(null));
     }
+
+    [Fact]
+    public void Park_ReturnsTrueAndConfirmation_IfVehicleWasParked()
+    {
+        var garage = CreateEmptyGarage(10);
+        var car = _fixture.Create<Car>();
+        (bool success, string message) = garage.Park(car);
+
+        Assert.True(success);
+        Assert.Equal($"The vehicle {car.RegistrationNumber} was parked", message);
+    }
+
+    [Fact]
+    public void Park_ParksCarAsExpected_IfPossible()
+    {
+        var garage = CreateEmptyGarage(10);
+        var car = _fixture.Create<Car>();
+        garage.Park(car);
+
+        Assert.Contains(car, garage.GetVehicles());
+    }
+
+    [Fact]
+    public void Park_ReturnsFalseAndMessage_IfGarageWasFull()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var car = _fixture.Create<Car>();
+        (bool success, string message) = garage.Park(car);
+
+        Assert.False(success);
+        Assert.Equal($"The garage is full", message);
+    }
+
+    [Fact]
+    public void Park_DoesNotParkCar_IfGarageWasFull()
+    {
+        var garage = CreateGarageWithSeed(10);
+        var car = _fixture.Create<Car>();
+        garage.Park(car);
+
+        Assert.DoesNotContain(car, garage.GetVehicles());
+    }
+
+    [Fact]
+    public void Park_ReturnsFalseAndMessage_IfVehicleIsDuplicate()
+    {
+        var garage = CreateGarageWithSeed(10, 5);
+        var car = garage[0]!;
+        (bool success, string message) = garage.Park(car);
+
+        Assert.False(success);
+        Assert.Equal($"The vehicle is already parked", message);
+    }
+
+    [Fact]
+    public void Park_DoesNotParkCar_IfVehicleIsDuplicate()
+    {
+        var garage = CreateGarageWithSeed(10, 5);
+        var car = garage[0]!;
+        garage.Park(car);
+
+        Assert.Equal(5, garage.GetVehicles().Count());
+        Assert.Distinct(garage.GetVehicles());
+    }
+
+    [Fact]
+    public void Park_ThrowsArgumentNotException_IfVehicleIsNull()
+    {
+        var garage = CreateEmptyGarage(1);
+        Assert.Throws<ArgumentNullException>(() => garage.Park(null));
+    }
 }

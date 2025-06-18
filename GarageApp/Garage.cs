@@ -45,16 +45,21 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
         return GetVehicles().GroupBy(v => v.Type).Select(kv => (kv.Key, kv.Count()));
     }
 
-    public bool Park(T vehicle)
+    public (bool, string) Park(T vehicle)
     {
-        if (IsFull || HasDuplicate(vehicle))
-            return false;
+        ArgumentNullException.ThrowIfNull(vehicle);
+
+        if (IsFull)
+            return (false, "The garage is full");
+
+        if (HasDuplicate(vehicle))
+            return (false, "The vehicle is already parked");
 
         if (!TryFindSpot(out int index))
             throw new InvalidOperationException("Unexpected error. Garage is full");
 
         _vehicles[index] = vehicle;
-        return true;
+        return (true, $"The vehicle {vehicle.RegistrationNumber} was parked");
     }
 
     public bool Depart(string registrationNumber)

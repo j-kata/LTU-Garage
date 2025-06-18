@@ -52,9 +52,14 @@ public class GarageHandler : IHandler
         _garage != null && _garage.Depart(rNumber)
             ? "Vehicle departed" : "Vehice was not found";
 
-    public string ParkVehicle(Vehicle vehicle) =>
-        _garage is not null && _garage.Park(vehicle)
-            ? "Vehicle was parked" : "Garage is full or vehicle is already parked";
+    public string ParkVehicle(Vehicle vehicle)
+    {
+        if (_garage == null)
+            return "Garage was not created";
+
+        (bool _success, string message) = _garage.Park(vehicle);
+        return message;
+    }
 
     public IEnumerable<string> FilterVehicles(VehicleFilterData data) =>
         _garage?.GetVehicles().Where(v =>

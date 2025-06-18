@@ -21,6 +21,7 @@ public class DefaultGarageMenuTests
     private const string MenuChoicePrintList = "3";
     private const string MenuChoicePrintStat = "4";
     private const string MenuChoiceFindByNum = "5";
+    private const string MenuChoiceLoad = "7";
     private const string MenuChoiceExit = "0";
     private const int GarageCapacity = 5;
     private const int PlacesLeft = 20;
@@ -177,6 +178,25 @@ public class DefaultGarageMenuTests
 
         _menu.Run();
         _ui.Verify(x => x.WriteLine(result));
+    }
+
+    [Fact]
+    public void Run_PrintsLoadedVehicles_WhenOptionLoadIsChose()
+    {
+        string[] result = ["Vehicle [N1] was parked", "Vehicle [N1] was parked"];
+        Vehicle[] vehicles = _fixture.CreateMany<Mock<Vehicle>>(4).Select(x => x.Object).ToArray();
+        _loader.Setup(x => x.Load()).Returns(vehicles);
+
+        _handler.SetupSequence(x => x.ParkVehicle(vehicles[0]))
+            .Returns(result[0]).Returns(result[1]);
+
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoiceLoad) // Choose Load
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+        foreach (var r in result)
+            _ui.Verify(x => x.WriteLine(r), Times.Once);
     }
 
     [Fact]
