@@ -1,8 +1,8 @@
 using AutoFixture;
-using AutoFixture.AutoMoq;
 using GarageApp.Handler;
 using GarageApp.Loader;
 using GarageApp.Menu;
+using GarageApp.Types;
 using GarageApp.UI;
 using GarageApp.Vehicles;
 using Moq;
@@ -37,17 +37,10 @@ public class DefaultGarageMenuTests
     {
         _menu = new(_ui.Object, _handler.Object, _loader.Object);
         _fixture = new Fixture();
-        _fixture.Customize(new AutoMoqCustomization());
-    }
 
-    public Vehicle[] CreateVehicles(int capacity)
-    {
-        var vehicles = new Vehicle[capacity];
-
-        for (int i = 0; i < capacity; i++)
-            vehicles[i] = _fixture.Create<Mock<Vehicle>>().Object;
-
-        return vehicles;
+        _fixture.Customize<Car>(c => c.FromFactory(
+            () => new Car("ABC", "Volvo", "XC60", ColorType.Red, 4, FuelType.Gasoline, 5)
+        ));
     }
 
     [Fact]
@@ -170,7 +163,7 @@ public class DefaultGarageMenuTests
     public void Run_PrintsLoadedVehicles_WhenOptionLoadIsChosen()
     {
         string[] result = ["Vehicle [N1] was parked", "Vehicle [N1] was parked"];
-        Vehicle[] vehicles = _fixture.CreateMany<Mock<Vehicle>>(4).Select(x => x.Object).ToArray();
+        Vehicle[] vehicles = [_fixture.Create<Car>()];
         _loader.Setup(x => x.Load()).Returns(vehicles);
 
         _handler.SetupSequence(x => x.ParkVehicle(vehicles[0]))

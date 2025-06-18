@@ -53,23 +53,27 @@ public class CarTests
     {
         Assert.Throws<ArgumentException>(() => CreateCar(rNumber: "  "));
         Assert.Throws<ArgumentException>(() => CreateCar(rNumber: null));
+        Assert.Throws<ArgumentException>(() => CreateCar(rNumber: new string('a', 11)));
     }
 
     // Common Properties
     [Fact]
-    public void Constuctor_ThrowsArgumentException_IfBrandIsNullOrEmpty()
+    public void Constuctor_ThrowsArgumentException_IfBrandIsInvalid()
     {
         Assert.Throws<ArgumentException>(() => CreateCar(brand: "  "));
         Assert.Throws<ArgumentException>(() => CreateCar(brand: null));
+        Assert.Throws<ArgumentException>(() => CreateCar(brand: new string('a', 31)));
     }
 
     // Common Properties
     [Fact]
-    public void Constuctor_ThrowsArgumentException_IfModelIsNullOrEmpty()
+    public void Constuctor_ThrowsArgumentException_IfModelIsInvalid()
     {
         Assert.Throws<ArgumentException>(() => CreateCar(model: "  "));
         Assert.Throws<ArgumentException>(() => CreateCar(model: null));
+        Assert.Throws<ArgumentException>(() => CreateCar(model: new string('a', 50)));
     }
+
 
     // Common Properties
     [Fact]

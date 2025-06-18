@@ -1,8 +1,6 @@
 using AutoFixture;
-using AutoFixture.AutoMoq;
 using GarageApp.Types;
 using GarageApp.Vehicles;
-using Moq;
 
 namespace GarageApp.Tests;
 
@@ -15,17 +13,17 @@ public class GarageTests
     private readonly Garage<Vehicle> _emptyGarage;
     private readonly Garage<Vehicle> _halfFullGarage;
     private readonly Garage<Vehicle> _fullGarage;
-    private Vehicle _validVehicle;
-    private int _validIndex;
-    private string _validNumber;
+    private readonly Vehicle _validVehicle;
+    private readonly int _validIndex;
+    private readonly string _validNumber;
 
     private readonly Fixture _fixture;
-
+    private readonly Random _random = new();
 
     public GarageTests()
     {
         _fixture = new Fixture();
-        _fixture.Customize(new AutoMoqCustomization());
+        CustomizeFixtures();
 
         _emptyGarage = CreateEmptyGarage(Capacity);
         _halfFullGarage = CreateGarageWithSeed(Capacity, SeedSize);
@@ -36,30 +34,51 @@ public class GarageTests
         _validNumber = _validVehicle.RegistrationNumber;
     }
 
-    public Car CreateCar() => _fixture.Create<Car>();
+    private void CustomizeFixtures()
+    {
+        _fixture.Customize<Car>(c => c.FromFactory(
+            () => new Car(RNumber(), "Car", "Model", ColorType.Red, 4, FuelType.Gasoline, 5)
+        ));
+        _fixture.Customize<Boat>(c => c.FromFactory(
+            () => new Boat(RNumber(), "Boat", "Model", ColorType.Red, BoatType.Bowrider, 5)
+        ));
+        _fixture.Customize<Airplane>(c => c.FromFactory(
+            () => new Airplane(RNumber(), "Airplane", "Model", ColorType.Red, 2, 3, 11)
+        ));
+        _fixture.Customize<Motorcycle>(c => c.FromFactory(
+            () => new Motorcycle(RNumber(), "Motorcycle", "Model", ColorType.Red, 2, 750, true)
+        ));
+        _fixture.Customize<Bus>(c => c.FromFactory(
+            () => new Bus(RNumber(), "Bus", "Model", ColorType.Red, 2, 44, true)
+        ));
+    }
 
-    public Vehicle[] CreateVehicles(int capacity)
+    private string RNumber() => _random.Next(500).ToString();
+
+    private Car CreateCar() => _fixture.Create<Car>();
+
+    private Vehicle[] CreateVehicles(int capacity)
     {
         var vehicles = new Vehicle[capacity];
 
         for (int i = 0; i < capacity; i++)
-            vehicles[i] = _fixture.Create<Mock<Vehicle>>().Object;
+            vehicles[i] = _fixture.Create<Car>();
 
         return vehicles;
     }
 
-    public static Garage<Vehicle> CreateEmptyGarage(int capacity)
+    private static Garage<Vehicle> CreateEmptyGarage(int capacity)
     {
         return new Garage<Vehicle>(capacity);
     }
 
-    public Garage<Vehicle> CreateGarageWithSeed(int seedSize)
+    private Garage<Vehicle> CreateGarageWithSeed(int seedSize)
     {
         var seed = CreateVehicles(seedSize);
         return new Garage<Vehicle>(seed);
     }
 
-    public Garage<Vehicle> CreateGarageWithSeed(int capacity, int seedSize)
+    private Garage<Vehicle> CreateGarageWithSeed(int capacity, int seedSize)
     {
         var seed = CreateVehicles(seedSize);
         return new Garage<Vehicle>(capacity, seed);
