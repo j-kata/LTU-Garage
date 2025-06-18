@@ -10,8 +10,9 @@ public abstract class Vehicle : IVehicle
     public string RegistrationNumber { get; }
     public ColorType Color { get; }
     public int WheelsNumber { get; }
-    public string Type => GetType().Name;
+    public abstract VehicleType Type { get; }
 
+    // TODO: restrict registration number
     public Vehicle(string registrationNumber, string brand, string model, ColorType color, int wheelsNumber)
     {
         RegistrationNumber = registrationNumber.NotEmpty(nameof(registrationNumber));

@@ -8,6 +8,8 @@ public class Boat : Vehicle
     public BoatType BoatType { get; }
     public double Length { get; }
 
+    public override VehicleType Type => VehicleType.Boat;
+
     public Boat(string registrationNumber, string brand, string model, ColorType color, BoatType boatType, double length)
         : base(registrationNumber, brand, model, color, 0)
     {
