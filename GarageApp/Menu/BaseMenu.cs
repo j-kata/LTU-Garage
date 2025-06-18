@@ -26,6 +26,8 @@ public abstract class BaseMenu(IUI ui, IHandler handler) : IMenu
 
             // Handle input. Continue running menu if true 
             keepRunning = HandleChoice(input);
+
+            _ui.WriteLine();
         }
         return ShouldExit;
     }

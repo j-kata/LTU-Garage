@@ -36,7 +36,7 @@ public class EmptyGarageMenuTests
         _ui.Setup(x => x.ReadLine()).Returns(MenuChoiceExit); // Exit loop
 
         _menu.Run();
-        _ui.Verify(x => x.WriteLine(It.Is<string>(s => s.Equals(EmptyGarageTitle))));
+        _ui.Verify(x => x.WriteLine(EmptyGarageTitle));
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class EmptyGarageMenuTests
             .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
-        _ui.Verify(x => x.IndentedWriteLine(It.Is<string>(s => s.Equals(GarageSizePrompt))));
+        _ui.Verify(x => x.IndentedWriteLine(GarageSizePrompt));
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class EmptyGarageMenuTests
             .Returns(MenuChoiceExit); // Exit
 
         _menu.Run();
-        _ui.Verify(x => x.IndentedWriteLine(It.Is<string>(s => s.Equals(GarageSizePrompt))), Times.Exactly(2));
+        _ui.Verify(x => x.IndentedWriteLine(GarageSizePrompt), Times.Exactly(2));
     }
 
     [Fact]

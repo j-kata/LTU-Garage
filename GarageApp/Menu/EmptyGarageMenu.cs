@@ -31,10 +31,11 @@ public class EmptyGarageMenu : BaseMenu
 
     public override void Show()
     {
-        _ui.WriteLine();
-
+        _ui.Separator();
         foreach (var option in _menuOptions)
             _ui.WriteLine($"{option.Key}. {option.Value.name}");
+
+        _ui.Separator();
     }
 
     // Handle input. Return false to exit from menu 

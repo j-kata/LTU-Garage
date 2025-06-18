@@ -19,12 +19,17 @@ public class ConsoleUI : IUI
 
     public void IndentedWriteLine(string? text = "")
     {
-        Console.WriteLine();
+        WriteLine();
         WriteLine(text);
     }
 
     public void Clear()
     {
         Console.Clear();
+    }
+
+    public void Separator(char symbol = '-', int repeat = 15)
+    {
+        WriteLine(new string(symbol, repeat));
     }
 }
