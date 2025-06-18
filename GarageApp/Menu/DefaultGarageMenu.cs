@@ -31,7 +31,7 @@ public class DefaultGarageMenu : BaseMenu
             { FindByNumberChoice, ("Find vehicle by registration number", FindVehicleByRNumber) },
             { FilterChoice, ("Filter vehicles by parameters", FilterVehicles) },
             { LoadVehiclesChoice, ("Load vehicles from source", LoadVehiclesFromSource) },
-            { ExitChoice, ("Exit", () => ContinueToNextMenu = false) }
+            { ExitChoice, ("Exit", () =>  ShouldExit = true) },
         };
     }
 
@@ -39,13 +39,17 @@ public class DefaultGarageMenu : BaseMenu
 
     public override void Show()
     {
-        _ui.IndentedWriteLine(
-            $"Garage capacity: {_handler.TotalPlaces()}.\n" +
-            $"Number of spots left: {_handler.FreePlaces()}."
-        );
+        _ui.Separator();
+        // Overview
+        foreach (var line in _handler.GarageOverview())
+            _ui.WriteLine(line);
 
+        _ui.Separator();
+        // Options
         foreach (var option in _menuOptions)
             _ui.WriteLine($"{option.Key}. {option.Value.name}");
+
+        _ui.Separator();
     }
 
     public override bool HandleChoice(string choice)

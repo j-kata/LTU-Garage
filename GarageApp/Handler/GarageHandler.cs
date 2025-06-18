@@ -15,13 +15,25 @@ public class GarageHandler : IHandler
     public void CreateGarage(Vehicle[] vehicles) =>
         _garage = new Garage<Vehicle>(vehicles);
 
-    public bool IsGarageEmpty() => _garage?.IsEmpty ?? true;
-    public int TotalPlaces() => _garage?.Capacity ?? 0;
-    public int FreePlaces() => _garage?.PlacesLeft ?? 0;
+    public IEnumerable<string> GarageOverview()
+    {
+        if (_garage == null)
+            return ["Garage was not created"];
 
-    public IEnumerable<string> ListVehicles() =>
-        _garage?.GetVehicles()
-            .Select(v => v.ToString()) ?? [];
+        return [
+            $"Total places: {_garage.Capacity}",
+            $"Free places: {_garage.PlacesLeft}",
+            $"Occupied: {_garage.Count}"
+        ];
+    }
+
+    public IEnumerable<string> ListVehicles()
+    {
+        if (_garage == null || _garage.IsEmpty)
+            return ["Garage is empty"];
+
+        return _garage.GetVehicles().Select(v => v.ToString());
+    }
 
     public IEnumerable<string> VehicleTypeStats() =>
         _garage?.GetVehiclesTypeCount()

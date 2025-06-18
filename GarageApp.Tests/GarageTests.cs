@@ -44,7 +44,6 @@ public class GarageTests
         return new Garage<Vehicle>(capacity, seed);
     }
 
-    // Constructor without seed
     [Fact]
     public void Constructor_InitializesGarage_WhenCapacityIsValid()
     {
@@ -77,7 +76,6 @@ public class GarageTests
         Assert.Equal(Capacity, garage.PlacesLeft);
     }
 
-    // Constructor with seed
     [Fact]
     public void Constructor_WithSeed_InitializesGarageWithVehicles()
     {
@@ -111,7 +109,6 @@ public class GarageTests
         Assert.Equal(SeedSize, garage.Count);
     }
 
-    // Constructor with capacity and seed 
     [Fact]
     public void Constructor_WithSeedSmallerThenCapactity_WorksAsExpected()
     {
@@ -149,5 +146,32 @@ public class GarageTests
         var garage = CreateGarageWithSeed(Capacity, SeedSize);
 
         Assert.False(garage.IsFull);
+    }
+
+    [Fact]
+    public void GetVehicles_ReturnsEmptyCollection_WhenGarageIsEmpty()
+    {
+        var garage = CreateEmptyGarage(Capacity);
+
+        Assert.Empty(garage.GetVehicles());
+    }
+
+    [Fact]
+    public void GetVehicles_ReturnsAllVehicles_WhenGarageIsFull()
+    {
+        var vehicles = CreateVehicles(Capacity);
+        var garage = new Garage<Vehicle>(vehicles); ;
+
+        Assert.Equal(vehicles, garage.GetVehicles());
+    }
+
+    [Fact]
+    public void GetVehicles_ReturnsAllNotNullVehicles()
+    {
+        var garage = CreateGarageWithSeed(Capacity, SeedSize);
+        var vehicles = garage.GetVehicles();
+
+        Assert.DoesNotContain(null, vehicles);
+        Assert.Equal(SeedSize, vehicles.Count());
     }
 }

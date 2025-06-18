@@ -22,9 +22,8 @@ public abstract class Vehicle : IVehicle
         WheelsNumber = wheelsNumber.NotNegative(nameof(wheelsNumber));
     }
 
-    // TODO: override for subclasses
     public override string ToString()
     {
-        return $"{Type} [{RegistrationNumber}]: {Brand} {Model}, {Color}";
+        return $"{Type}: {Brand} {Model}, {Color} [{RegistrationNumber}]";
     }
 }
