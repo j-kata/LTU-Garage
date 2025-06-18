@@ -15,8 +15,10 @@ public class DefaultGarageMenuTests
     private const string DefaultGarageTitle = "Welcome to garage management!";
     // private const string CreateGaragePrompt = "Create new garage";
     private const string GarageSizePrompt = "Enter garage size: ";
+    private const string GarageIsEmpty = "Garage is empty";
     private const string InvalidInput = "Invalid";
     private const string MenuChoicePrintList = "3";
+    private const string MenuChoicePrintStat = "4";
     // private const string MenuChoiceLoadGarage = "2";
     private const string MenuChoiceExit = "0";
     private const int GarageCapacity = 5;
@@ -99,6 +101,50 @@ public class DefaultGarageMenuTests
 
         foreach (var item in list)
             _ui.Verify(x => x.WriteLine(item.ToString()), Times.Once);
+    }
+
+    [Fact]
+    public void Run_PrintsGarageIsEmpty_IfPrintingEmptyList()
+    {
+        _handler.Setup(x => x.ListVehicles()).Returns([GarageIsEmpty]);
+
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoicePrintList) // Choose Print
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+
+        _ui.Verify(x => x.WriteLine(GarageIsEmpty), Times.Once);
+    }
+
+    [Fact]
+    public void Run_PrintsVehiclesTypeStats_WhenOptionPrintStatIsChosen()
+    {
+        string[] stat = ["Car: 2", "Bus: 3"];
+        _handler.Setup(x => x.VehicleTypeStats()).Returns(stat);
+
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoicePrintStat) // Choose Print Statistics
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+
+        foreach (var item in stat)
+            _ui.Verify(x => x.WriteLine(item.ToString()), Times.Once);
+    }
+
+    [Fact]
+    public void Run_PrintsGarageIsEmpty_IfPrintingEmptyStat()
+    {
+        _handler.Setup(x => x.VehicleTypeStats()).Returns([GarageIsEmpty]);
+
+        _ui.SetupSequence(x => x.ReadLine())
+            .Returns(MenuChoicePrintStat) // Choose Print
+            .Returns(MenuChoiceExit); // Exit
+
+        _menu.Run();
+
+        _ui.Verify(x => x.WriteLine(GarageIsEmpty), Times.Once);
     }
 
     [Fact]

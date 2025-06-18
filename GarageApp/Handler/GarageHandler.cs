@@ -35,9 +35,14 @@ public class GarageHandler : IHandler
         return _garage.GetVehicles().Select(v => v.ToString());
     }
 
-    public IEnumerable<string> VehicleTypeStats() =>
-        _garage?.GetVehiclesTypeCount()
-            .Select(v => $"{v.name}: {v.count}") ?? [];
+    public IEnumerable<string> VehicleTypeStats()
+    {
+        if (_garage == null || _garage.IsEmpty)
+            return ["Garage is empty"];
+
+        return _garage.GetVehiclesTypeCount()
+            .Select(v => $"{v.name}: {v.count}");
+    }
 
     public string FindByRegistration(string rNumber) =>
         _garage?.FindByRegistrationNumber(rNumber)?.ToString()

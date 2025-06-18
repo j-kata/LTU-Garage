@@ -1,5 +1,6 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using GarageApp.Types;
 using GarageApp.Vehicles;
 using Moq;
 
@@ -173,5 +174,24 @@ public class GarageTests
 
         Assert.DoesNotContain(null, vehicles);
         Assert.Equal(SeedSize, vehicles.Count());
+    }
+
+    [Fact]
+    public void GetVehiclesTypeCount_ReturnsExpectedResult()
+    {
+        int carNum = 5, planeNum = 4, busNum = 1;
+
+        Vehicle[] vehicles = [
+            .._fixture.CreateMany<Car>(carNum),
+            _fixture.Create<Bus>(),
+            .._fixture.CreateMany<Airplane>(planeNum)
+        ];
+
+        var garage = new Garage<Vehicle>(vehicles);
+        var typeCount = garage.GetVehiclesTypeCount();
+
+        Assert.Contains((VehicleType.Car, carNum), typeCount);
+        Assert.Contains((VehicleType.Bus, busNum), typeCount);
+        Assert.Contains((VehicleType.Airplane, planeNum), typeCount);
     }
 }
