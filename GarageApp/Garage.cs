@@ -45,7 +45,7 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
         return GetVehicles().GroupBy(v => v.Type).Select(kv => (kv.Key, kv.Count()));
     }
 
-    public (bool, string) Park(T vehicle)
+    public (bool, string message) Park(T vehicle)
     {
         ArgumentNullException.ThrowIfNull(vehicle);
 
@@ -62,13 +62,20 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
         return (true, $"The vehicle {vehicle.RegistrationNumber} was parked");
     }
 
-    public bool Depart(string registrationNumber)
+    public (bool, string message) Depart(string registrationNumber)
     {
         if (!TryFindByRegistrationNumber(registrationNumber, out int index))
-            return false;
+            return (false, "Vehicle was not found");
 
         _vehicles[index] = null;
-        return true;
+        return (true, "Vehicle departed");
+    }
+
+    public (bool, string message) FindByRegistrationNumber(string registrationNumber)
+    {
+        return TryFindByRegistrationNumber(registrationNumber, out int index)
+            ? (true, _vehicles[index]!.ToString())
+            : (false, "Vehicle was not found");
     }
 
     public bool TryFindByRegistrationNumber(string rNumber, out int index)
@@ -77,11 +84,6 @@ public class Garage<T> : IEnumerable<T?> where T : Vehicle
 
         index = _vehicles.FirstWithRegistrationNumber(validNumber);
         return index != -1;
-    }
-
-    public T? FindByRegistrationNumber(string registrationNumber)
-    {
-        return TryFindByRegistrationNumber(registrationNumber, out int index) ? _vehicles[index] : null;
     }
 
     public bool HasDuplicate(T vehicle)

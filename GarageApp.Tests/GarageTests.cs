@@ -10,13 +10,33 @@ public class GarageTests
 {
     private const int Capacity = 10;
     private const int SeedSize = 5;
+    private const string InvalidNumber = "Invalid number";
+
+    private readonly Garage<Vehicle> _emptyGarage;
+    private readonly Garage<Vehicle> _halfFullGarage;
+    private readonly Garage<Vehicle> _fullGarage;
+    private Vehicle _validVehicle;
+    private int _validIndex;
+    private string _validNumber;
+
     private readonly Fixture _fixture;
+
 
     public GarageTests()
     {
         _fixture = new Fixture();
         _fixture.Customize(new AutoMoqCustomization());
+
+        _emptyGarage = CreateEmptyGarage(Capacity);
+        _halfFullGarage = CreateGarageWithSeed(Capacity, SeedSize);
+        _fullGarage = CreateGarageWithSeed(Capacity);
+
+        _validIndex = 1;
+        _validVehicle = _fullGarage[_validIndex]!;
+        _validNumber = _validVehicle.RegistrationNumber;
     }
+
+    public Car CreateCar() => _fixture.Create<Car>();
 
     public Vehicle[] CreateVehicles(int capacity)
     {
@@ -48,10 +68,8 @@ public class GarageTests
     [Fact]
     public void Constructor_InitializesGarage_WhenCapacityIsValid()
     {
-        var garage = CreateEmptyGarage(Capacity);
-
-        Assert.Equal(Capacity, garage.Capacity);
-        Assert.Empty(garage.GetVehicles());
+        Assert.Equal(Capacity, _emptyGarage.Capacity);
+        Assert.Empty(_emptyGarage.GetVehicles());
     }
 
     [Fact]
@@ -64,17 +82,13 @@ public class GarageTests
     [Fact]
     public void IsEmpty_ReturnsTrue_WhenCreatedWithNoSeed()
     {
-        var garage = CreateEmptyGarage(Capacity);
-
-        Assert.True(garage.IsEmpty);
+        Assert.True(_emptyGarage.IsEmpty);
     }
 
     [Fact]
     public void PlacesLeft_EqualsCapacity_WhenCreatedWithNoSeed()
     {
-        var garage = CreateEmptyGarage(Capacity);
-
-        Assert.Equal(Capacity, garage.PlacesLeft);
+        Assert.Equal(Capacity, _emptyGarage.PlacesLeft);
     }
 
     [Fact]
@@ -89,25 +103,19 @@ public class GarageTests
     [Fact]
     public void Constructor_WithSeed_SetsCapacityToSeedLength()
     {
-        var garage = CreateGarageWithSeed(SeedSize);
-
-        Assert.Equal(SeedSize, garage.Capacity);
+        Assert.Equal(Capacity, _fullGarage.Capacity);
     }
 
     [Fact]
     public void IsFull_ReturnsTrue_WhenSeedFillsCapacity()
     {
-        var garage = CreateGarageWithSeed(SeedSize);
-
-        Assert.True(garage.IsFull);
+        Assert.True(_fullGarage.IsFull);
     }
 
     [Fact]
     public void Count_EqualsSeedLength_WhenSeedFillsCapacity()
     {
-        var garage = CreateGarageWithSeed(SeedSize);
-
-        Assert.Equal(SeedSize, garage.Count);
+        Assert.Equal(Capacity, _fullGarage.Count);
     }
 
     [Fact]
@@ -128,33 +136,25 @@ public class GarageTests
     [Fact]
     public void PlacesLeft_ReturnsExpected_WhenCapacityExceedSeed()
     {
-        var garage = CreateGarageWithSeed(Capacity, SeedSize);
-
-        Assert.Equal(Capacity - SeedSize, garage.PlacesLeft);
+        Assert.Equal(Capacity - SeedSize, _halfFullGarage.PlacesLeft);
     }
 
     [Fact]
     public void IsEmpty_ReturnsFalse_WhenCapacityExceedSeed()
     {
-        var garage = CreateGarageWithSeed(Capacity, SeedSize);
-
-        Assert.False(garage.IsEmpty);
+        Assert.False(_halfFullGarage.IsEmpty);
     }
 
     [Fact]
     public void IsFull_ReturnsFalse_WhenCapacityExceedSeed()
     {
-        var garage = CreateGarageWithSeed(Capacity, SeedSize);
-
-        Assert.False(garage.IsFull);
+        Assert.False(_halfFullGarage.IsFull);
     }
 
     [Fact]
     public void GetVehicles_ReturnsEmptyCollection_WhenGarageIsEmpty()
     {
-        var garage = CreateEmptyGarage(Capacity);
-
-        Assert.Empty(garage.GetVehicles());
+        Assert.Empty(_emptyGarage.GetVehicles());
     }
 
     [Fact]
@@ -169,8 +169,7 @@ public class GarageTests
     [Fact]
     public void GetVehicles_ReturnsAllNotNullVehicles()
     {
-        var garage = CreateGarageWithSeed(Capacity, SeedSize);
-        var vehicles = garage.GetVehicles();
+        var vehicles = _halfFullGarage.GetVehicles();
 
         Assert.DoesNotContain(null, vehicles);
         Assert.Equal(SeedSize, vehicles.Count());
@@ -198,106 +197,81 @@ public class GarageTests
     [Fact]
     public void TryFindByRegistrationNumber_ReturnsTrueAndIndex_IfVehicleFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var validIndex = 4;
-        var validNumber = garage[validIndex]!.RegistrationNumber;
-
-        Assert.True(garage.TryFindByRegistrationNumber(validNumber, out var index));
-        Assert.Equal(index, validIndex);
+        Assert.True(_fullGarage.TryFindByRegistrationNumber(_validNumber, out var index));
+        Assert.Equal(index, _validIndex);
     }
 
     [Fact]
     public void TryFindByRegistrationNumber_ReturnsFalseAndInvalidIndex_IfVehicleNotFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var invalidNumber = "InvalidNumber";
-
-        Assert.False(garage.TryFindByRegistrationNumber(invalidNumber, out var index));
+        Assert.False(_fullGarage.TryFindByRegistrationNumber(InvalidNumber, out var index));
         Assert.Equal(-1, index);
     }
 
     [Fact]
     public void TryFindByRegistrationNumber_ThrowsArgumentException_IfNumberIsNull()
     {
-        var garage = CreateGarageWithSeed(10);
-
-        Assert.Throws<ArgumentException>(() => garage.TryFindByRegistrationNumber(null, out var index));
+        Assert.Throws<ArgumentException>(() => _fullGarage.TryFindByRegistrationNumber(null, out var _));
     }
 
     [Fact]
-    public void FindByRegistrationNumber_ReturnsVehicle_IfFound()
+    public void FindByRegistrationNumber_ReturnsTrueAndInfo_IfVehicleFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var validVehicle = garage[4];
-        var validNumber = validVehicle!.RegistrationNumber;
-
-        Assert.Equal(validVehicle, garage.FindByRegistrationNumber(validNumber));
+        (bool success, string message) = _fullGarage.FindByRegistrationNumber(_validNumber);
+        Assert.True(success);
+        Assert.Equal(_validVehicle.ToString(), message);
     }
 
     [Fact]
-    public void FindByRegistrationNumber_ReturnsNull_IfVehicleNotFound()
+    public void FindByRegistrationNumber_ReturnsFalseAndCorrectMessage_IfVehicleNotFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var invalidVehicle = _fixture.Create<Car>();
-        var invalidNumber = invalidVehicle.RegistrationNumber;
-
-        Assert.Null(garage.FindByRegistrationNumber(invalidNumber));
+        (bool success, string message) = _fullGarage.FindByRegistrationNumber(InvalidNumber);
+        Assert.False(success);
+        Assert.Equal("Vehicle was not found", message);
     }
 
     [Fact]
     public void FindByRegistrationNumber_ThrowsArgumentException_IfNumberIsNull()
     {
-        var garage = CreateGarageWithSeed(10);
-
-        Assert.Throws<ArgumentException>(() => garage.FindByRegistrationNumber(null));
+        Assert.Throws<ArgumentException>(() => _fullGarage.FindByRegistrationNumber(null));
     }
 
     [Fact]
-    public void Depart_ReturnsTrue_IfVehicleWasFound()
+    public void Depart_ReturnsTrueAndCorrectMessage_IfVehicleWasFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var validVehicle = garage[0];
-        var validNumber = validVehicle!.RegistrationNumber;
-
-        Assert.True(garage.Depart(validNumber));
+        (bool success, string message) = _fullGarage.Depart(_validNumber);
+        Assert.True(success);
+        Assert.Equal("Vehicle departed", message);
     }
 
     [Fact]
     public void Depart_RemovesVehicleFromGarage_IfVehicleWasFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var validVehicle = garage[0];
-        var validNumber = validVehicle!.RegistrationNumber;
-        garage.Depart(validNumber);
+        _fullGarage.Depart(_validNumber);
 
-        Assert.DoesNotContain(validVehicle, garage.GetVehicles());
-        Assert.Null(garage[0]);
+        Assert.DoesNotContain(_validVehicle, _fullGarage.GetVehicles());
+        Assert.Null(_fullGarage[_validIndex]);
     }
 
     [Fact]
-    public void Depart_ReturnsFalse_IfVehicleWasNotFound()
+    public void Depart_ReturnsFalseAndCorrectMessage_IfVehicleWasNotFound()
     {
-        var garage = CreateGarageWithSeed(10);
-        var invalidVehicle = _fixture.Create<Car>();
-        var invalidNumber = invalidVehicle.RegistrationNumber;
-
-        Assert.False(garage.Depart(invalidNumber));
+        (bool success, string message) = _fullGarage.Depart(InvalidNumber);
+        Assert.False(success);
+        Assert.Equal("Vehicle was not found", message);
     }
 
     [Fact]
     public void Depart_ThrowsArgumentException_IfNumberIsNull()
     {
-        var garage = CreateGarageWithSeed(10);
-
-        Assert.Throws<ArgumentException>(() => garage.Depart(null));
+        Assert.Throws<ArgumentException>(() => _fullGarage.Depart(null));
     }
 
     [Fact]
-    public void Park_ReturnsTrueAndConfirmation_IfVehicleWasParked()
+    public void Park_ReturnsTrueAndCorrectMessage_IfVehicleWasParked()
     {
-        var garage = CreateEmptyGarage(10);
-        var car = _fixture.Create<Car>();
-        (bool success, string message) = garage.Park(car);
+        var car = CreateCar();
+        (bool success, string message) = _emptyGarage.Park(car);
 
         Assert.True(success);
         Assert.Equal($"The vehicle {car.RegistrationNumber} was parked", message);
@@ -306,19 +280,17 @@ public class GarageTests
     [Fact]
     public void Park_ParksCarAsExpected_IfPossible()
     {
-        var garage = CreateEmptyGarage(10);
-        var car = _fixture.Create<Car>();
-        garage.Park(car);
+        var car = CreateCar();
+        _emptyGarage.Park(car);
 
-        Assert.Contains(car, garage.GetVehicles());
+        Assert.Contains(car, _emptyGarage.GetVehicles());
     }
 
     [Fact]
-    public void Park_ReturnsFalseAndMessage_IfGarageWasFull()
+    public void Park_ReturnsFalseAndCorrectMessage_IfGarageWasFull()
     {
-        var garage = CreateGarageWithSeed(10);
-        var car = _fixture.Create<Car>();
-        (bool success, string message) = garage.Park(car);
+        var car = CreateCar();
+        (bool success, string message) = _fullGarage.Park(car);
 
         Assert.False(success);
         Assert.Equal($"The garage is full", message);
@@ -327,19 +299,17 @@ public class GarageTests
     [Fact]
     public void Park_DoesNotParkCar_IfGarageWasFull()
     {
-        var garage = CreateGarageWithSeed(10);
-        var car = _fixture.Create<Car>();
-        garage.Park(car);
+        var car = CreateCar();
+        _fullGarage.Park(car);
 
-        Assert.DoesNotContain(car, garage.GetVehicles());
+        Assert.DoesNotContain(car, _fullGarage.GetVehicles());
     }
 
     [Fact]
     public void Park_ReturnsFalseAndMessage_IfVehicleIsDuplicate()
     {
-        var garage = CreateGarageWithSeed(10, 5);
-        var car = garage[0]!;
-        (bool success, string message) = garage.Park(car);
+        var vehicle = _halfFullGarage[0]!;
+        (bool success, string message) = _halfFullGarage.Park(vehicle);
 
         Assert.False(success);
         Assert.Equal($"The vehicle is already parked", message);
@@ -348,18 +318,39 @@ public class GarageTests
     [Fact]
     public void Park_DoesNotParkCar_IfVehicleIsDuplicate()
     {
-        var garage = CreateGarageWithSeed(10, 5);
-        var car = garage[0]!;
-        garage.Park(car);
+        var vehicle = _halfFullGarage[0]!;
+        _halfFullGarage.Park(vehicle);
 
-        Assert.Equal(5, garage.GetVehicles().Count());
-        Assert.Distinct(garage.GetVehicles());
+        Assert.Equal(SeedSize, _halfFullGarage.GetVehicles().Count());
+        Assert.Distinct(_halfFullGarage.GetVehicles());
     }
 
     [Fact]
     public void Park_ThrowsArgumentNotException_IfVehicleIsNull()
     {
-        var garage = CreateEmptyGarage(1);
-        Assert.Throws<ArgumentNullException>(() => garage.Park(null));
+        Assert.Throws<ArgumentNullException>(() => _emptyGarage.Park(null));
+    }
+
+    [Fact]
+    public void TryFindSpot_ReturnsTrueAndIndex_WhenNullFound()
+    {
+        Assert.True(_halfFullGarage.TryFindSpot(out int index));
+        Assert.Equal(SeedSize, index);
+    }
+
+    [Fact]
+    public void TryFindSpot_ReturnsFalseAndInvalidIndex_WhenNullNotFound()
+    {
+        Assert.False(_fullGarage.TryFindSpot(out int index));
+        Assert.Equal(-1, index);
+    }
+
+    [Fact]
+    public void TryFindSpot_FindsRightIndex_AfterDepart()
+    {
+        _fullGarage.Depart(_validNumber);
+        _fullGarage.TryFindSpot(out int index);
+
+        Assert.Equal(_validIndex, index);
     }
 }

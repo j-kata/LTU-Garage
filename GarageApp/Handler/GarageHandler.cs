@@ -5,6 +5,7 @@ namespace GarageApp.Handler;
 
 public class GarageHandler : IHandler
 {
+    private const string InvalidOperation = "Garage was not created";
     private Garage<Vehicle>? _garage;
 
     public bool HasGarage() => _garage is not null;
@@ -18,7 +19,7 @@ public class GarageHandler : IHandler
     public IEnumerable<string> GarageOverview()
     {
         if (_garage == null)
-            return ["Garage was not created"];
+            return [InvalidOperation];
 
         return [
             $"Total places: {_garage.Capacity}",
@@ -45,21 +46,14 @@ public class GarageHandler : IHandler
     }
 
     public string FindByRegistration(string rNumber) =>
-        _garage?.FindByRegistrationNumber(rNumber)?.ToString()
-            ?? "Vehice was not found";
+        _garage?.FindByRegistrationNumber(rNumber).message
+            ?? InvalidOperation;
 
     public string DepartVehicle(string rNumber) =>
-        _garage != null && _garage.Depart(rNumber)
-            ? "Vehicle departed" : "Vehice was not found";
+        _garage?.Depart(rNumber).message ?? InvalidOperation;
 
-    public string ParkVehicle(Vehicle vehicle)
-    {
-        if (_garage == null)
-            return "Garage was not created";
-
-        (bool _success, string message) = _garage.Park(vehicle);
-        return message;
-    }
+    public string ParkVehicle(Vehicle vehicle) =>
+        _garage?.Park(vehicle).message ?? InvalidOperation;
 
     public IEnumerable<string> FilterVehicles(VehicleFilterData data) =>
         _garage?.GetVehicles().Where(v =>
