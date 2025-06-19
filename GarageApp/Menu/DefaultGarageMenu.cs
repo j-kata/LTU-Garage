@@ -78,13 +78,13 @@ public class DefaultGarageMenu : BaseMenu
 
     public void PrintVehiclesList()
     {
-        foreach (var vehicle in _handler.ListVehicles())
+        foreach (var vehicle in _handler.GetVehicleList())
             _ui.WriteLine(vehicle);
     }
 
     public void PrintVehicleTypeStats()
     {
-        foreach (var vehicle in _handler.VehicleTypeStats())
+        foreach (var vehicle in _handler.GetVehicleTypeStats())
             _ui.WriteLine(vehicle);
     }
 

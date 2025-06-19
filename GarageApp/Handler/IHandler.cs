@@ -9,8 +9,8 @@ public interface IHandler
     public void CreateGarage(int capacity);
     public void CreateGarage(Vehicle[] vehicles);
     public IEnumerable<string> GarageOverview();
-    public IEnumerable<string> ListVehicles();
-    public IEnumerable<string> VehicleTypeStats();
+    public IEnumerable<string> GetVehicleList();
+    public IEnumerable<string> GetVehicleTypeStats();
     public string? FindByRegistration(string rNumber);
     public string DepartVehicle(string rNumber);
     public string ParkVehicle(Vehicle vehicle);

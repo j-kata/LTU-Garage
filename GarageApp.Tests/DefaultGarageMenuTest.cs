@@ -101,7 +101,7 @@ public class DefaultGarageMenuTests
             "Bus: Brand Model, Color [Number]"
         ];
 
-        _handler.Setup(x => x.ListVehicles()).Returns(list);
+        _handler.Setup(x => x.GetVehicleList()).Returns(list);
 
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoicePrintList) // Choose Print
@@ -117,7 +117,7 @@ public class DefaultGarageMenuTests
     public void Run_PrintsVehiclesTypeStats_WhenOptionPrintStatIsChosen()
     {
         string[] stat = ["Car: 2", "Bus: 3"];
-        _handler.Setup(x => x.VehicleTypeStats()).Returns(stat);
+        _handler.Setup(x => x.GetVehicleTypeStats()).Returns(stat);
 
         _ui.SetupSequence(x => x.ReadLine())
             .Returns(MenuChoicePrintStat) // Choose Print Statistics

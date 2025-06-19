@@ -6,7 +6,9 @@ namespace GarageApp.Handler;
 public class GarageHandler : IHandler
 {
     private const string InvalidOperation = "Garage was not created";
-    private Garage<Vehicle>? _garage;
+    private const string GarageIsEmpty = "Garage is empty";
+
+    private IGarage<Vehicle>? _garage;
 
     public bool HasGarage() => _garage is not null;
 
@@ -15,6 +17,9 @@ public class GarageHandler : IHandler
 
     public void CreateGarage(Vehicle[] vehicles) =>
         _garage = new Garage<Vehicle>(vehicles);
+
+    public void SetGarage(IGarage<Vehicle> garage) =>
+        _garage = garage;
 
     public IEnumerable<string> GarageOverview()
     {
@@ -28,18 +33,18 @@ public class GarageHandler : IHandler
         ];
     }
 
-    public IEnumerable<string> ListVehicles()
+    public IEnumerable<string> GetVehicleList()
     {
         if (_garage == null || _garage.IsEmpty)
-            return ["Garage is empty"];
+            return [GarageIsEmpty];
 
         return _garage.GetVehicles().Select(v => v.ToString());
     }
 
-    public IEnumerable<string> VehicleTypeStats()
+    public IEnumerable<string> GetVehicleTypeStats()
     {
         if (_garage == null || _garage.IsEmpty)
-            return ["Garage is empty"];
+            return [GarageIsEmpty];
 
         return _garage.GetVehiclesTypeCount()
             .Select(v => $"{v.name}: {v.count}");
