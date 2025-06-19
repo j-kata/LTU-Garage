@@ -11,7 +11,7 @@ public static class ArgumentExtensions
     public static string MaxLength(this string value, int max, string name)
     {
         return value.Length <= max ? value
-            : throw new ArgumentException($"Should not be longer than {max} {value}", name);
+            : throw new ArgumentException($"Should not be longer than {max}", name);
     }
 
     public static double Positive(this double value, string name)

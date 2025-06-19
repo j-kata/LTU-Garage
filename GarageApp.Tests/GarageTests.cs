@@ -18,7 +18,8 @@ public class GarageTests
     private readonly string _validNumber;
 
     private readonly Fixture _fixture;
-    private readonly Random _random = new();
+    private int _counter = 0;
+    private string RNumber => $"{_counter++:D8}";
 
     public GarageTests()
     {
@@ -36,24 +37,15 @@ public class GarageTests
 
     private void CustomizeFixtures()
     {
-        _fixture.Customize<Car>(c => c.FromFactory(
-            () => new Car(RNumber(), "Car", "Model", ColorType.Red, 4, FuelType.Gasoline, 5)
-        ));
-        _fixture.Customize<Boat>(c => c.FromFactory(
-            () => new Boat(RNumber(), "Boat", "Model", ColorType.Red, BoatType.Bowrider, 5)
-        ));
-        _fixture.Customize<Airplane>(c => c.FromFactory(
-            () => new Airplane(RNumber(), "Airplane", "Model", ColorType.Red, 2, 3, 11)
-        ));
-        _fixture.Customize<Motorcycle>(c => c.FromFactory(
-            () => new Motorcycle(RNumber(), "Motorcycle", "Model", ColorType.Red, 2, 750, true)
-        ));
-        _fixture.Customize<Bus>(c => c.FromFactory(
-            () => new Bus(RNumber(), "Bus", "Model", ColorType.Red, 2, 44, true)
-        ));
+        FixtureFactory(() => new Car(RNumber, "Car", "Model", ColorType.Red, 4, FuelType.Gasoline, 5));
+        FixtureFactory(() => new Boat(RNumber, "Boat", "Model", ColorType.Red, BoatType.Bowrider, 5));
+        FixtureFactory(() => new Airplane(RNumber, "Airplane", "Model", ColorType.Red, 2, 3, 11));
+        FixtureFactory(() => new Motorcycle(RNumber, "Motorcycle", "Model", ColorType.Red, 2, 750, true));
+        FixtureFactory(() => new Bus(RNumber, "Bus", "Model", ColorType.Red, 2, 44, true));
     }
 
-    private string RNumber() => _random.Next(500).ToString();
+    private void FixtureFactory<T>(Func<T> factory) =>
+        _fixture.Customize<T>(c => c.FromFactory(factory));
 
     private Car CreateCar() => _fixture.Create<Car>();
 
@@ -67,21 +59,35 @@ public class GarageTests
         return vehicles;
     }
 
-    private static Garage<Vehicle> CreateEmptyGarage(int capacity)
+    private static Garage<Vehicle> CreateEmptyGarage(int capacity) =>
+        new(capacity);
+
+    private Garage<Vehicle> CreateGarageWithSeed(int seedSize) =>
+        new(CreateVehicles(seedSize));
+
+    private Garage<Vehicle> CreateGarageWithSeed(int capacity, int seedSize) =>
+        new(capacity, CreateVehicles(seedSize));
+
+    [Fact]
+    public void Index_ThrowsException_IfOutOfRange()
     {
-        return new Garage<Vehicle>(capacity);
+        Assert.Throws<IndexOutOfRangeException>(() => _fullGarage[Capacity]);
     }
 
-    private Garage<Vehicle> CreateGarageWithSeed(int seedSize)
+    [Fact]
+    public void Enumerator_WorksAsExpected()
     {
-        var seed = CreateVehicles(seedSize);
-        return new Garage<Vehicle>(seed);
-    }
+        var seed = CreateVehicles(Capacity);
+        var garage = new Garage<Vehicle>(seed);
 
-    private Garage<Vehicle> CreateGarageWithSeed(int capacity, int seedSize)
-    {
-        var seed = CreateVehicles(seedSize);
-        return new Garage<Vehicle>(capacity, seed);
+        var seedEnumerator = seed.GetEnumerator();
+        seedEnumerator.MoveNext();
+
+        foreach (var v in garage)
+        {
+            Assert.Equal(seedEnumerator.Current, v);
+            seedEnumerator.MoveNext();
+        }
     }
 
     [Fact]
@@ -117,6 +123,29 @@ public class GarageTests
         var garage = new Garage<Vehicle>(seed);
 
         Assert.Equal(seed[0], garage[0]);
+    }
+
+    [Fact]
+    public void Constructor_WithSeed_SkipsDuplicates_OnCreate()
+    {
+        var seed = CreateVehicles(SeedSize);
+        var garage = new Garage<Vehicle>([.. seed, seed[0]]);
+
+        Assert.Equal(SeedSize + 1, garage.Capacity);
+        Assert.Equal(SeedSize, garage.Count);
+        Assert.Distinct(garage);
+    }
+
+    [Fact]
+    public void Constructor_WithSeed_SkipsNulls_OnCreate()
+    {
+        var seed = CreateVehicles(SeedSize);
+        var garage = new Garage<Vehicle>([null, null, .. seed]);
+
+        Assert.Equal(SeedSize + 2, garage.Capacity);
+        Assert.Equal(SeedSize, garage.Count);
+
+        Assert.All(seed, (v) => Assert.Contains(v, garage.GetVehicles()));
     }
 
     [Fact]
@@ -182,7 +211,7 @@ public class GarageTests
         var vehicles = CreateVehicles(Capacity);
         var garage = new Garage<Vehicle>(vehicles); ;
 
-        Assert.Equal(vehicles, garage.GetVehicles());
+        Assert.All(vehicles, v => Assert.Contains(v, garage.GetVehicles()));
     }
 
     [Fact]
