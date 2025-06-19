@@ -18,6 +18,7 @@ public class GarageHandler : IHandler
     public void CreateGarage(Vehicle[] vehicles) =>
         _garage = new Garage<Vehicle>(vehicles);
 
+    // For testing. Not included in the interface
     public void SetGarage(IGarage<Vehicle> garage) =>
         _garage = garage;
 

@@ -49,6 +49,7 @@ public class FilterVehicleMenu : BaseMenu
         if (choice == ReturnChoice)
             return false;
 
+        // Return to previous menu if Apply was chosen, otherwise keep choosing filters
         if (_createOptions.TryGetValue(choice, out var action))
         {
             action.filter();

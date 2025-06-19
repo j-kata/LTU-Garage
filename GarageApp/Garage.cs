@@ -26,6 +26,7 @@ public class Garage<T> : IEnumerable<T?>, IGarage<T> where T : Vehicle
     {
         seed.MaxLength(capacity, nameof(capacity));
 
+        // Skip duplicates and null without exception
         for (var i = 0; i < seed.Length; i++)
             if (seed[i] != null && !HasDuplicate(seed[i]))
                 _vehicles[i] = seed[i];
@@ -54,6 +55,7 @@ public class Garage<T> : IEnumerable<T?>, IGarage<T> where T : Vehicle
         if (HasDuplicate(vehicle))
             return (false, "The vehicle is already parked");
 
+        // Should never happen
         if (!TryFindSpot(out int index))
             throw new InvalidOperationException("Unexpected error. Garage is full");
 
@@ -90,6 +92,7 @@ public class Garage<T> : IEnumerable<T?>, IGarage<T> where T : Vehicle
         return TryFindByRegistrationNumber(vehicle.RegistrationNumber, out int _);
     }
 
+    // Reuse spots that were freed
     public bool TryFindSpot(out int index)
     {
         index = _vehicles.FirstNullIndex();

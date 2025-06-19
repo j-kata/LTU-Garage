@@ -45,6 +45,7 @@ public static class Util
         return int.Parse(validString);
     }
 
+    // Print Promt following By Enum. Consider only item's indexes as valid input
     public static TEnum PromptUnilValidEnumChoice<TEnum>(IUI ui, string prompt) where TEnum : struct, Enum
     {
         var values = Enum.GetValues<TEnum>();

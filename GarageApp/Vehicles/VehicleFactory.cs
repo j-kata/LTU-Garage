@@ -4,7 +4,7 @@ namespace GarageApp.Vehicles;
 
 public static class VehicleFactory
 {
-    // TODO: refactor, leave one public function, get type of vehicle as a parameter and vehicle from within
+    // TODO: refactor with generics, leave one public function, get type of vehicle as a parameter and vehicle from within
     public static Vehicle CreateCar(VehicleCommonData data, FuelType fuelType, int doorsNumber)
     {
         return new Car(

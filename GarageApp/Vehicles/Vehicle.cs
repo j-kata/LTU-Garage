@@ -1,10 +1,9 @@
 using GarageApp.Types;
 using GarageApp.Extensions;
-using System.ComponentModel.DataAnnotations;
 
 namespace GarageApp.Vehicles;
 
-public abstract class Vehicle : IVehicle
+public abstract class Vehicle
 {
     private const int RNumberMax = 10;
     private const int BrandMax = 30;

@@ -25,7 +25,7 @@ public class GarageManager(IUI ui, IHandler handler, ILoader<Vehicle> loader) : 
                 ? new DefaultGarageMenu(_ui, _handler, _loader)
                 : new EmptyGarageMenu(_ui, _handler, _loader);
 
-            shouldExit = menu.Run(); 
+            shouldExit = menu.Run();
         }
     }
 }

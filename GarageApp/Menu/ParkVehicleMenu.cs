@@ -48,6 +48,7 @@ public class ParkVehicleMenu : BaseMenu
         if (choice == ReturnChoice)
             return false;
 
+        // Create selected vehicle and try to park 
         if (_createOptions.TryGetValue(choice, out var func))
         {
             var vehicle = func.create();
