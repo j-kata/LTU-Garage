@@ -5,7 +5,7 @@ using GarageApp.Vehicles;
 
 namespace GarageApp;
 
-public class Garage<T> : IEnumerable<T?> where T : Vehicle
+public class Garage<T> : IEnumerable<T?>, IGarage<T> where T : Vehicle
 {
     private readonly T?[] _vehicles;
 
